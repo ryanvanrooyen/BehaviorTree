@@ -1,13 +1,14 @@
 {
     "version": "0.1.0",
-    "command": "dotnet",
+    "command": "mcs",
     "isShellCommand": true,
     "args": [],
     "tasks": [
         {
-            "taskName": "build",
+            "taskName": "**.cs",
             "args": [
-                "${workspaceRoot}/project.json"
+                "-t:library",
+                "-out:BehaviorTree.dll"
             ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"
