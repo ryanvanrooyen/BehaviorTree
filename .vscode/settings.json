@@ -6,6 +6,8 @@
         "**/.hg": true,
         "**/.DS_Store": true,
         "**/.vscode": true,
-        "**/obj": true
+        "**/obj": true,
+        "**/bin": true,
+        "**.lock.json": true
     }
 }
