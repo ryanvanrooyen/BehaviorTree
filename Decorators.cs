@@ -3,207 +3,207 @@ using System;
 
 namespace BehaviorTree
 {
-    public abstract class Decorator : INode
-    {
-        private readonly INode node;
+	public abstract class Decorator : INode
+	{
+		private readonly INode node;
 
-        public Decorator(INode node)
-        {
-            if (node == null)
-                throw new ArgumentNullException("node");
-            
-            this.node = node;
-        }
+		public Decorator(INode node)
+		{
+			if (node == null)
+				throw new ArgumentNullException(nameof(node));
 
-        public virtual Result Run()
-        {
-            return this.node.Run();
-        }
-    }
+			this.node = node;
+		}
 
-    public class Always : Decorator
-    {
-        private readonly Result result;
+		public virtual Result Run()
+		{
+			return this.node.Run();
+		}
+	}
 
-        public Always(Result result, INode node) : base(node)
-        {
-            if (result == Result.Running)
-                throw new ArgumentException("Specified result must be success or failure");
+	public class Always : Decorator
+	{
+		private readonly Result result;
 
-            this.result = result;
-        }
+		public Always(Result result, INode node) : base(node)
+		{
+			if (result == Result.Running)
+				throw new ArgumentException("Specified result must be success or failure");
 
-        public override Result Run()
-        {
-            var status = base.Run();
-            if (status == Result.Running)
-                return status;
+			this.result = result;
+		}
 
-            return this.result;
-        }
-    }
+		public override Result Run()
+		{
+			var status = base.Run();
+			if (status == Result.Running)
+				return status;
 
-    public class Until : Decorator
-    {
-        private readonly Result result;
+			return this.result;
+		}
+	}
 
-        public Until(Result result, INode node) : base(node)
-        {
-            if (result == Result.Running)
-                throw new ArgumentException("Specified result must be success or failure");
-            
-            this.result = result;
-        }
+	public class Until : Decorator
+	{
+		private readonly Result result;
 
-        public override Result Run()
-        {
-            var status = base.Run();
-            if (status == this.result)
-                return Result.Success;
+		public Until(Result result, INode node) : base(node)
+		{
+			if (result == Result.Running)
+				throw new ArgumentException("Specified result must be success or failure");
 
-            return Result.Running;
-        }
-    }
+			this.result = result;
+		}
 
-    public class Invert : Decorator
-    {
-        public Invert(INode node) : base(node)
-        {}
+		public override Result Run()
+		{
+			var status = base.Run();
+			if (status == this.result)
+				return Result.Success;
 
-        public override Result Run()
-        {
-            var result = base.Run();
-            if (result == Result.Success)
-                return Result.Failure;
-            if (result == Result.Failure)
-                return Result.Success;
+			return Result.Running;
+		}
+	}
 
-            return result;
-        }
-    }
+	public class Invert : Decorator
+	{
+		public Invert(INode node) : base(node)
+		{ }
 
-    public class Repeat : Decorator
-    {
-        private readonly uint times;
-        private uint iteration;
+		public override Result Run()
+		{
+			var result = base.Run();
+			if (result == Result.Success)
+				return Result.Failure;
+			if (result == Result.Failure)
+				return Result.Success;
 
-        public Repeat(uint times, INode node) : base(node)
-        {
-            this.times = times;
-            this.iteration = 0;
-        }
+			return result;
+		}
+	}
 
-        public override Result Run()
-        {
-            var result = base.Run();
-            
-            if (result == Result.Running)
-                return result;
-            
-            this.iteration += 1;
-            if (this.iteration >= this.times)
-            {
-                this.iteration = 0;
-                return Result.Success;
-            }
+	public class Repeat : Decorator
+	{
+		private readonly uint times;
+		private uint iteration;
 
-            return Result.Running;
-        }
-    }
+		public Repeat(uint times, INode node) : base(node)
+		{
+			this.times = times;
+			this.iteration = 0;
+		}
 
-    public class Retry : Decorator
-    {
-        private readonly uint maxAttempts;
-        private uint attempt;
+		public override Result Run()
+		{
+			var result = base.Run();
 
-        public Retry(uint maxAttempts, INode node) : base(node)
-        {
-            this.maxAttempts = maxAttempts;
-            this.attempt = 0;
-        }
+			if (result == Result.Running)
+				return result;
 
-        public override Result Run()
-        {
-            var result = base.Run();
-            
-            if (result == Result.Success)
-                this.attempt = 0;
+			this.iteration += 1;
+			if (this.iteration >= this.times)
+			{
+				this.iteration = 0;
+				return Result.Success;
+			}
 
-            if (result != Result.Failure)
-                return result;
+			return Result.Running;
+		}
+	}
 
-            this.attempt += 1;
-            if (this.attempt >= this.maxAttempts)
-            {
-                this.attempt = 0;
-                return Result.Failure;
-            }
-            
-            return Result.Running;
-        }
-    }
+	public class Retry : Decorator
+	{
+		private readonly uint maxAttempts;
+		private uint attempt;
 
-    public class Delay : Decorator
-    {
-        private readonly TimeSpan delay;
-        private DateTime? startTime;
+		public Retry(uint maxAttempts, INode node) : base(node)
+		{
+			this.maxAttempts = maxAttempts;
+			this.attempt = 0;
+		}
 
-        public Delay(TimeSpan delay, INode node) : base(node)
-        {
-            this.delay = delay;
-        }
+		public override Result Run()
+		{
+			var result = base.Run();
 
-        public override Result Run()
-        {
-            var currentTime = DateTime.Now;
+			if (result == Result.Success)
+				this.attempt = 0;
 
-            if (this.startTime == null)
-                this.startTime = currentTime + this.delay;
+			if (result != Result.Failure)
+				return result;
 
-            if (this.startTime > currentTime)
-                return Result.Running;
+			this.attempt += 1;
+			if (this.attempt >= this.maxAttempts)
+			{
+				this.attempt = 0;
+				return Result.Failure;
+			}
 
-            this.startTime = null;
-            return base.Run();
-        }
-    }
+			return Result.Running;
+		}
+	}
 
-    public class Limit : Decorator
-    {
-        private readonly TimeSpan maxRunTime;
-        private DateTime? endTime;
+	public class Delay : Decorator
+	{
+		private readonly TimeSpan delay;
+		private DateTime? startTime;
 
-        public Limit(TimeSpan maxRunTime, INode node) : base(node)
-        {
-            this.maxRunTime = maxRunTime;
-        }
+		public Delay(TimeSpan delay, INode node) : base(node)
+		{
+			this.delay = delay;
+		}
 
-        public override Result Run()
-        {
-            var result = base.Run();
+		public override Result Run()
+		{
+			var currentTime = DateTime.Now;
 
-            if (result != Result.Running)
-            {
-                this.endTime = null;
-                return result;
-            }
-            
-            var currentTime = DateTime.Now;
+			if (this.startTime == null)
+				this.startTime = currentTime + this.delay;
 
-            if (this.endTime == null)
-            {
-                this.endTime = currentTime + this.maxRunTime;
-                return Result.Running;
-            }
+			if (this.startTime > currentTime)
+				return Result.Running;
 
-            // If the max time to wait has passed, return failed.
-            if (currentTime > this.endTime)
-            {
-                this.endTime = null;
-                return Result.Failure;
-            }
+			this.startTime = null;
+			return base.Run();
+		}
+	}
 
-            return Result.Running;
-        }
-    }
+	public class Limit : Decorator
+	{
+		private readonly TimeSpan maxRunTime;
+		private DateTime? endTime;
+
+		public Limit(TimeSpan maxRunTime, INode node) : base(node)
+		{
+			this.maxRunTime = maxRunTime;
+		}
+
+		public override Result Run()
+		{
+			var result = base.Run();
+
+			if (result != Result.Running)
+			{
+				this.endTime = null;
+				return result;
+			}
+
+			var currentTime = DateTime.Now;
+
+			if (this.endTime == null)
+			{
+				this.endTime = currentTime + this.maxRunTime;
+				return Result.Running;
+			}
+
+			// If the max time to wait has passed, return failed.
+			if (currentTime > this.endTime)
+			{
+				this.endTime = null;
+				return Result.Failure;
+			}
+
+			return Result.Running;
+		}
+	}
 }
