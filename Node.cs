@@ -1,11 +1,53 @@
 
+using System;
+
 namespace BehaviorTree
 {
-    public class Node
+    public enum Result
     {
-        public static int Add(int x, int y)
+        Success,
+        Running,
+        Failure
+    }
+
+    public interface INode
+    {
+        Result Run();
+    }
+
+    public class Node : INode
+    {
+        private readonly Func<Result> behavior;
+
+        public Node(Func<Result> behavior)
         {
-            return x + y;
+            if (behavior == null)
+                throw new ArgumentNullException("behavior");
+
+            this.behavior = behavior;
         }
+
+        public Result Run()
+        {
+            return this.behavior();
+        }
+    }
+
+    public class Succeed : Node
+    {
+        public Succeed() : base(() => Result.Success)
+        {}
+    }
+
+    public class Fail : Node
+    {
+        public Fail() : base(() => Result.Failure)
+        {}
+    }
+
+    public class Running : Node
+    {
+        public Running() : base(() => Result.Running)
+        {}
     }
 }

@@ -1,3 +1,20 @@
+// {
+//     "version": "0.1.0",
+//     "command": "dotnet",
+//     "isShellCommand": true,
+//     "args": [],
+//     "tasks": [
+//         {
+//             "taskName": "build",
+//             "args": [
+//                 "${workspaceRoot}/project.json"
+//             ],
+//             "isBuildCommand": true,
+//             "problemMatcher": "$msCompile"
+//         }
+//     ]
+// }
+
 {
     "version": "0.1.0",
     "command": "mcs",
@@ -7,8 +24,8 @@
         {
             "taskName": "**.cs",
             "args": [
-                "-t:library",
-                "-out:BehaviorTree.dll"
+                // "-t:library",
+                "-out:BehaviorTree.exe"
             ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"

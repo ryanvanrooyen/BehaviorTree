@@ -1,4 +1,30 @@
 
+#AutoSave Files
+*~
+
+# Build and Test Output
 obj
 bin
+test-results
+
+# Upgrade Files
+_UpgradeReport_Files
+UpgradeLog.*
+
+# User Data
+*.DS_Store
+*.sln.cache
+*.suo
+*.userprefs
+*.usertasks
+*.user
+*.csproj.user
+
+# ReSharper
+*_Resharper.*
+*.Resharper
+
+# DotCover
+*.dotCover
+
 *.lock.json
