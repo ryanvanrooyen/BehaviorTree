@@ -1,4 +1,6 @@
 
+using System;
+
 namespace BehaviorTree
 {
 	public enum Result
@@ -11,6 +13,27 @@ namespace BehaviorTree
 	public interface INode
 	{
 		Result Run();
+	}
+
+
+	public delegate T Func<T>();
+
+	public class Node2 : INode
+	{
+		private readonly Func<Result> action;
+
+		public Node2(Func<Result> action)
+		{
+			if (action == null)
+				throw new ArgumentNullException(nameof(action));
+
+			this.action = action;
+		}
+
+		public Result Run()
+		{
+			return this.action();
+		}
 	}
 
 	public abstract class Node : INode

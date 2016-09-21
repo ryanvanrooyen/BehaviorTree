@@ -11,7 +11,7 @@ namespace BehaviorTree
 		public Composite(params INode[] children)
 		{
 			if (children == null)
-				throw new ArgumentNullException("children");
+				throw new ArgumentNullException(nameof(children));
 
 			this.children = children;
 		}
