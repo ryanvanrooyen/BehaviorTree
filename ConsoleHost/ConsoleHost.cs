@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Threading;
 
 namespace BehaviorTree
 {
@@ -7,13 +8,44 @@ namespace BehaviorTree
 	{
 		public static void Main(string[] args)
 		{
-			Console.WriteLine("Hello World!");
+			var i = 0;
+			var playerVisible = new Node(() =>
+			{
+				Console.WriteLine("Checking if Player visible.");
+				i++;
+				var visible = i > 3;
+				Console.WriteLine("Player is visible: " + visible);
+				return visible ? Result.Success : Result.Failure;
+			});
 
-			var indexes = Indicies.Create(5);
-			Indicies.Shuffle(indexes);
+			var chasePlayer = new Repeat(3, new Node(() =>
+			{
+				Console.WriteLine("Chasing player...");
+				return Result.Success;
+			}));
 
-			foreach (var i in indexes)
-				Console.WriteLine(i);
+			var attackPlayer = new Node(() =>
+			{
+				Console.WriteLine("Attacked player.");
+				return Result.Success;
+			});
+
+			var attack = new Sequence(playerVisible, chasePlayer, attackPlayer);
+
+			var patrol = new Node(() =>
+			{
+				Console.WriteLine("Patrolling around.");
+				return Result.Running;
+			});
+
+			var root = new Selector(attack, patrol);
+
+			Result result = Result.Running;
+			while (result == Result.Running)
+			{
+				Thread.Sleep(1000);
+				root.Run();
+			}
 		}
 	}
 }

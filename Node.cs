@@ -15,14 +15,13 @@ namespace BehaviorTree
 		Result Run();
 	}
 
-
 	public delegate T Func<T>();
 
-	public class Node2 : INode
+	public class Node : INode
 	{
 		private readonly Func<Result> action;
 
-		public Node2(Func<Result> action)
+		public Node(Func<Result> action)
 		{
 			if (action == null)
 				throw new ArgumentNullException(nameof(action));
@@ -34,34 +33,14 @@ namespace BehaviorTree
 		{
 			return this.action();
 		}
-	}
 
-	public abstract class Node : INode
-	{
-		public abstract Result Run();
-	}
+		public static readonly INode Success
+			= new Node(() => Result.Success);
 
-	public class Succeed : Node
-	{
-		public override Result Run()
-		{
-			return Result.Success;
-		}
-	}
+		public static readonly INode Fail
+			= new Node(() => Result.Failure);
 
-	public class Fail : Node
-	{
-		public override Result Run()
-		{
-			return Result.Failure;
-		}
-	}
-
-	public class Running : Node
-	{
-		public override Result Run()
-		{
-			return Result.Running;
-		}
+		public static readonly INode Running
+			= new Node(() => Result.Running);
 	}
 }
