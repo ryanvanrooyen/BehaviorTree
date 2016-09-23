@@ -32,7 +32,7 @@ namespace BehaviorTree
 
 		protected Result RandomIterate(Result endResult, int[] indexes)
 		{
-			Indicies.Shuffle(indexes);
+			Indexes.Shuffle(indexes);
 
 			for (var i = 0; i < indexes.Length; i++)
 			{
@@ -63,7 +63,7 @@ namespace BehaviorTree
 
 		public RandomSelector(params INode[] children) : base(children)
 		{
-			this.indexes = Indicies.Create(children.Length);
+			this.indexes = Indexes.Create(children.Length);
 		}
 
 		public override Result Run()
@@ -89,7 +89,7 @@ namespace BehaviorTree
 
 		public RandomSequence(params INode[] children) : base(children)
 		{
-			this.indexes = Indicies.Create(children.Length);
+			this.indexes = Indexes.Create(children.Length);
 		}
 
 		public override Result Run()
@@ -98,7 +98,7 @@ namespace BehaviorTree
 		}
 	}
 
-	public static class Indicies
+	public static class Indexes
 	{
 		// Simple Fisher-Yates Shuffle
 		// https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
