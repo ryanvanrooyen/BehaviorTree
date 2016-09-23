@@ -100,6 +100,8 @@ namespace BehaviorTree
 
 	public static class Indexes
 	{
+		private static readonly Random random = new Random();
+
 		// Simple Fisher-Yates Shuffle
 		// https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
 		public static void Shuffle(int[] indexes)
@@ -107,9 +109,7 @@ namespace BehaviorTree
 			if (indexes == null || indexes.Length == 0)
 				return;
 
-			var random = new Random();
 			var length = indexes.Length;
-
 			for (var i = 0; i < length - 1; i++)
 			{
 				var j = random.Next(i, length - 1);
