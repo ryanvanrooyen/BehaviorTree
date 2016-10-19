@@ -97,11 +97,11 @@ namespace BehaviorTree
 		{
 			var result = base.Run();
 
-			if (result == Result.Running)
+			if (result != Result.Success)
 				return result;
 
 			this.iteration += 1;
-			if (this.iteration >= this.times)
+			if (this.iteration > this.times)
 			{
 				this.iteration = 0;
 				return Result.Success;
@@ -133,7 +133,7 @@ namespace BehaviorTree
 				return result;
 
 			this.attempt += 1;
-			if (this.attempt >= this.maxAttempts)
+			if (this.attempt > this.maxAttempts)
 			{
 				this.attempt = 0;
 				return Result.Failure;
@@ -146,16 +146,22 @@ namespace BehaviorTree
 	public class Delay : Decorator
 	{
 		private readonly TimeSpan delay;
+		private readonly ITime time;
 		private DateTime? startTime;
 
-		public Delay(TimeSpan delay, INode node) : base(node)
+		public Delay(TimeSpan delay, INode node)
+			: this(delay, node, Time.Real)
+		{ }
+
+		internal Delay(TimeSpan delay, INode node, ITime time) : base(node)
 		{
 			this.delay = delay;
+			this.time = time;
 		}
 
 		public override Result Run()
 		{
-			var currentTime = DateTime.Now;
+			var currentTime = this.time.Now;
 
 			if (this.startTime == null)
 				this.startTime = currentTime + this.delay;
@@ -171,11 +177,17 @@ namespace BehaviorTree
 	public class Limit : Decorator
 	{
 		private readonly TimeSpan maxRunTime;
+		private readonly ITime time;
 		private DateTime? endTime;
 
-		public Limit(TimeSpan maxRunTime, INode node) : base(node)
+		public Limit(TimeSpan maxRunTime, INode node)
+			: this(maxRunTime, node, Time.Real)
+		{ }
+
+		internal Limit(TimeSpan maxRunTime, INode node, ITime time) : base(node)
 		{
 			this.maxRunTime = maxRunTime;
+			this.time = time;
 		}
 
 		public override Result Run()
@@ -188,7 +200,7 @@ namespace BehaviorTree
 				return result;
 			}
 
-			var currentTime = DateTime.Now;
+			var currentTime = this.time.Now;
 
 			if (this.endTime == null)
 			{

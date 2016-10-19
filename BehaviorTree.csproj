@@ -34,6 +34,7 @@
     <Compile Include="Node.cs" />
     <Compile Include="Composites.cs" />
     <Compile Include="Decorators.cs" />
+    <Compile Include="Time.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

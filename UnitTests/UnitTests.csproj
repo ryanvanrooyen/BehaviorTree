@@ -33,6 +33,7 @@
   <ItemGroup>
     <Compile Include="SequenceTests.cs" />
     <Compile Include="SelectorTests.cs" />
+    <Compile Include="DecoratorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

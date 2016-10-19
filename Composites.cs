@@ -20,9 +20,9 @@ namespace BehaviorTree
 
 		protected Result Iterate(Result endResult)
 		{
-			foreach (var child in this.children)
+			for (var i = 0; i < this.children.Length; i++)
 			{
-				var status = child.Run();
+				var status = this.children[i].Run();
 				if (status != endResult)
 					return status;
 			}
@@ -98,7 +98,7 @@ namespace BehaviorTree
 		}
 	}
 
-	public static class Indexes
+	internal static class Indexes
 	{
 		private static readonly Random random = new Random();
 
