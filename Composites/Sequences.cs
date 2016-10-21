@@ -3,12 +3,15 @@ namespace BehaviorTree
 {
 	public class Sequence : Composite
 	{
+		private int lastRunningChild;
+
 		public Sequence(params INode[] children) : base(children)
 		{ }
 
 		public override Result Run()
 		{
-			return Iterate(Result.Success);
+			return Iterate(Result.Success, this.lastRunningChild,
+				out this.lastRunningChild);
 		}
 	}
 
@@ -23,21 +26,9 @@ namespace BehaviorTree
 		}
 	}
 
-	public class MemorySequence : Composite
-	{
-		private int lastRunningChildIndex = 0;
-
-		public MemorySequence(params INode[] children) : base(children) { }
-
-		public override Result Run()
-		{
-			return MemoryIterate(Result.Success,
-				this.lastRunningChildIndex, out this.lastRunningChildIndex);
-		}
-	}
-
 	public class RandomSequence : Composite
 	{
+		private int lastRunningChild;
 		private readonly int[] indexes;
 
 		public RandomSequence(params INode[] children) : base(children)
@@ -47,7 +38,8 @@ namespace BehaviorTree
 
 		public override Result Run()
 		{
-			return RandomIterate(Result.Success, this.indexes);
+			return RandomIterate(Result.Success, this.indexes,
+				this.lastRunningChild, out this.lastRunningChild);
 		}
 	}
 }

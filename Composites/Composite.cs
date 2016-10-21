@@ -17,20 +17,7 @@ namespace BehaviorTree
 
 		public abstract Result Run();
 
-		protected Result Iterate(Result endResult)
-		{
-			for (var i = 0; i < this.children.Length; i++)
-			{
-				var status = this.children[i].Run();
-				if (status != endResult)
-					return status;
-			}
-
-			return endResult;
-		}
-
-		protected Result MemoryIterate(Result endResult,
-			int startIndex, out int stoppedIndex)
+		protected Result Iterate(Result endResult, int startIndex, out int stoppedIndex)
 		{
 			stoppedIndex = 0;
 
@@ -69,16 +56,25 @@ namespace BehaviorTree
 			return startResult;
 		}
 
-		protected Result RandomIterate(Result endResult, int[] indexes)
+		protected Result RandomIterate(Result endResult, int[] indexes,
+			int startIndex, out int stoppedIndex)
 		{
-			Indexes.Shuffle(indexes);
+			stoppedIndex = 0;
 
-			for (var i = 0; i < indexes.Length; i++)
+			if (startIndex == 0)
+				Indexes.Shuffle(indexes);
+
+			for (var i = startIndex; i < indexes.Length; i++)
 			{
 				var index = indexes[i];
 				var status = this.children[index].Run();
 				if (status != endResult)
+				{
+					if (status == Result.Running)
+						stoppedIndex = i;
+
 					return status;
+				}
 			}
 
 			return endResult;

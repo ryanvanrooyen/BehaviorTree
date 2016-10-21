@@ -27,16 +27,6 @@ namespace BehaviorTree
 		}
 
 		[Test]
-		public void MemorySuccess()
-		{
-			AssertSel(Result.Success, Node.Success);
-			AssertSel(Result.Success, Node.Success, Node.Fail);
-			AssertSel(Result.Success, Node.Success, Node.Running);
-			AssertSel(Result.Success, Node.Fail, Node.Success);
-			AssertSel(Result.Success, Node.Fail, Node.Fail, Node.Success);
-		}
-
-		[Test]
 		public void RunningSelectors()
 		{
 			AssertSel(Result.Running, Node.Running);
@@ -57,7 +47,7 @@ namespace BehaviorTree
 		}
 
 		[Test]
-		public void MemoryRunning()
+		public void LongRunningSelector()
 		{
 			var node1CallCount = 0;
 			var node1 = new Node(() =>
@@ -79,10 +69,10 @@ namespace BehaviorTree
 				return Result.Success;
 			});
 
-			var selector = new MemorySelector(node1, node2, node1, node2);
-			AssertMemory(Result.Running, selector);
-			AssertMemory(Result.Running, selector);
-			AssertMemory(Result.Success, selector);
+			var selector = new Selector(node1, node2, node1, node2);
+			AssertSelector(Result.Running, selector);
+			AssertSelector(Result.Running, selector);
+			AssertSelector(Result.Success, selector);
 
 			Assert.AreEqual(node1CallCount, 2);
 			Assert.AreEqual(node2CallCount, 4);
@@ -104,14 +94,6 @@ namespace BehaviorTree
 			AssertParallel(Result.Failure, Node.Fail, Node.Fail);
 		}
 
-		[Test]
-		public void MemoryFailure()
-		{
-			AssertMemory(Result.Failure);
-			AssertMemory(Result.Failure, Node.Fail);
-			AssertMemory(Result.Failure, Node.Fail, Node.Fail);
-		}
-
 		private void AssertSel(Result expected, params INode[] nodes)
 		{
 			AssertSelector(expected, new Selector(nodes));
@@ -120,11 +102,6 @@ namespace BehaviorTree
 		private void AssertParallel(Result expected, params INode[] nodes)
 		{
 			AssertSelector(expected, new ParallelSelector(nodes));
-		}
-
-		private void AssertMemory(Result expected, params INode[] nodes)
-		{
-			AssertSelector(expected, new MemorySelector(nodes));
 		}
 
 		private void AssertSelector(Result expected, INode selector)

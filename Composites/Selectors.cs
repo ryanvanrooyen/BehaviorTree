@@ -3,12 +3,15 @@ namespace BehaviorTree
 {
 	public class Selector : Composite
 	{
+		private int lastRunningChild;
+
 		public Selector(params INode[] children) : base(children)
 		{ }
 
 		public override Result Run()
 		{
-			return Iterate(Result.Failure);
+			return Iterate(Result.Failure, this.lastRunningChild,
+				out this.lastRunningChild);
 		}
 	}
 
@@ -23,21 +26,9 @@ namespace BehaviorTree
 		}
 	}
 
-	public class MemorySelector : Composite
-	{
-		private int lastRunningChildIndex = 0;
-
-		public MemorySelector(params INode[] children) : base(children) { }
-
-		public override Result Run()
-		{
-			return MemoryIterate(Result.Failure,
-				this.lastRunningChildIndex, out this.lastRunningChildIndex);
-		}
-	}
-
 	public class RandomSelector : Composite
 	{
+		private int lastRunningChild;
 		private readonly int[] indexes;
 
 		public RandomSelector(params INode[] children) : base(children)
@@ -47,7 +38,8 @@ namespace BehaviorTree
 
 		public override Result Run()
 		{
-			return RandomIterate(Result.Failure, this.indexes);
+			return RandomIterate(Result.Failure, this.indexes,
+				this.lastRunningChild, out this.lastRunningChild);
 		}
 	}
 }
