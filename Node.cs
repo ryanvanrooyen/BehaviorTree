@@ -32,7 +32,13 @@ namespace BehaviorTree
 
 		public Result Run()
 		{
-			return this.action();
+			try
+			{
+				return this.action();
+			}
+			catch (Exception) { }
+
+			return Result.Failure;
 		}
 
 		public static readonly INode Success
@@ -67,11 +73,11 @@ namespace BehaviorTree
 		}
 	}
 
-	public class Action : INode
+	public class Act : INode
 	{
 		private readonly Func action;
 
-		public Action(Func action)
+		public Act(Func action)
 		{
 			if (action == null)
 				throw new ArgumentNullException(nameof(action));
@@ -81,8 +87,14 @@ namespace BehaviorTree
 
 		public Result Run()
 		{
-			this.action();
-			return Result.Success;
+			try
+			{
+				this.action();
+				return Result.Success;
+			}
+			catch (Exception) { }
+
+			return Result.Failure;
 		}
 	}
 }
