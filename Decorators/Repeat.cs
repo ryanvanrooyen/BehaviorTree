@@ -6,9 +6,6 @@ namespace BehaviorTree
 		private readonly uint times;
 		private uint iteration;
 
-		public Repeat(uint times, Func<Result> node)
-			: this(times, new Node(node)) { }
-
 		public Repeat(uint times, INode node) : base(node)
 		{
 			this.times = times;

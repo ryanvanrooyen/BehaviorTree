@@ -9,9 +9,6 @@ namespace BehaviorTree
 		private readonly ITime time;
 		private DateTime? endTime;
 
-		public Limit(TimeSpan maxRunTime, Func<Result> node)
-			: this(maxRunTime, new Node(node)) { }
-
 		public Limit(TimeSpan maxRunTime, INode node)
 			: this(maxRunTime, node, Time.Real)
 		{ }

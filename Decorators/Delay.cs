@@ -9,9 +9,6 @@ namespace BehaviorTree
 		private readonly ITime time;
 		private DateTime? startTime;
 
-		public Delay(TimeSpan delay, Func<Result> node)
-			: this(delay, new Node(node)) { }
-
 		public Delay(TimeSpan delay, INode node)
 			: this(delay, node, Time.Real)
 		{ }

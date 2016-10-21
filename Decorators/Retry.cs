@@ -6,9 +6,6 @@ namespace BehaviorTree
 		private readonly uint maxAttempts;
 		private uint attempt;
 
-		public Retry(uint maxAttempts, Func<Result> node)
-			: this(maxAttempts, new Node(node)) { }
-
 		public Retry(uint maxAttempts, INode node) : base(node)
 		{
 			this.maxAttempts = maxAttempts;

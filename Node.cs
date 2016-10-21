@@ -15,14 +15,17 @@ namespace BehaviorTree
 		Result Run();
 	}
 
-	public delegate T Func<T>();
-	public delegate void Func();
+	public class Delegates
+	{
+		public delegate T Func<T>();
+		public delegate void Func();
+	}
 
 	public class Node : INode
 	{
-		private readonly Func<Result> action;
+		private readonly Delegates.Func<Result> action;
 
-		public Node(Func<Result> action)
+		public Node(Delegates.Func<Result> action)
 		{
 			if (action == null)
 				throw new ArgumentNullException(nameof(action));
@@ -53,9 +56,9 @@ namespace BehaviorTree
 
 	public class If : INode
 	{
-		private readonly Func<bool> condition;
+		private readonly Delegates.Func<bool> condition;
 
-		public If(Func<bool> condition)
+		public If(Delegates.Func<bool> condition)
 		{
 			if (condition == null)
 				throw new ArgumentNullException(nameof(condition));
@@ -75,9 +78,9 @@ namespace BehaviorTree
 
 	public class Act : INode
 	{
-		private readonly Func action;
+		private readonly Delegates.Func action;
 
-		public Act(Func action)
+		public Act(Delegates.Func action)
 		{
 			if (action == null)
 				throw new ArgumentNullException(nameof(action));

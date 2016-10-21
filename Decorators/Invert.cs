@@ -3,9 +3,6 @@ namespace BehaviorTree
 {
 	public class Invert : Decorator
 	{
-		public Invert(Func<Result> node)
-			: this(new Node(node)) { }
-
 		public Invert(INode node) : base(node)
 		{ }
 

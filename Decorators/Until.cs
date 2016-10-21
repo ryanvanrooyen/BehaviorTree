@@ -7,9 +7,6 @@ namespace BehaviorTree
 	{
 		private readonly Result result;
 
-		public Until(Result result, Func<Result> node)
-			: this(result, new Node(node)) { }
-
 		public Until(Result result, INode node) : base(node)
 		{
 			if (result == Result.Running)
