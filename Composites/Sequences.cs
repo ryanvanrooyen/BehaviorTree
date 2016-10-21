@@ -12,17 +12,6 @@ namespace BehaviorTree
 		}
 	}
 
-	public class Sequence<T> : Composite<T>
-	{
-		public Sequence(params INode<T>[] children) : base(children)
-		{ }
-
-		public override Result Run(T data)
-		{
-			return Iterate(data, Result.Success);
-		}
-	}
-
 	public class ParallelSequence : Composite
 	{
 		public ParallelSequence(params INode[] children) : base(children)
@@ -34,14 +23,16 @@ namespace BehaviorTree
 		}
 	}
 
-	public class ParallelSequence<T> : Composite<T>
+	public class MemorySequence : Composite
 	{
-		public ParallelSequence(params INode<T>[] children) : base(children)
-		{ }
+		private int lastRunningChildIndex = 0;
 
-		public override Result Run(T data)
+		public MemorySequence(params INode[] children) : base(children) { }
+
+		public override Result Run()
 		{
-			return ParallelIterate(data, Result.Success, Result.Failure);
+			return MemoryIterate(Result.Success,
+				this.lastRunningChildIndex, out this.lastRunningChildIndex);
 		}
 	}
 
@@ -57,21 +48,6 @@ namespace BehaviorTree
 		public override Result Run()
 		{
 			return RandomIterate(Result.Success, this.indexes);
-		}
-	}
-
-	public class RandomSequence<T> : Composite<T>
-	{
-		private readonly int[] indexes;
-
-		public RandomSequence(params INode<T>[] children) : base(children)
-		{
-			this.indexes = Indexes.Create(children.Length);
-		}
-
-		public override Result Run(T data)
-		{
-			return RandomIterate(data, Result.Success, this.indexes);
 		}
 	}
 }

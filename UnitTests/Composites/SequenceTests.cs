@@ -45,6 +45,15 @@ namespace BehaviorTree
 		}
 
 		[Test]
+		public void MemorySuccess()
+		{
+			AssertParallel(Result.Success);
+			AssertParallel(Result.Success, Node.Success);
+			AssertParallel(Result.Success, Node.Success, Node.Success);
+			AssertParallel(Result.Success, Node.Success, Node.Success, Node.Success);
+		}
+
+		[Test]
 		public void ParallelFailure()
 		{
 			AssertParallel(Result.Failure, Node.Fail);
@@ -52,6 +61,18 @@ namespace BehaviorTree
 			AssertParallel(Result.Failure, Node.Success, Node.Fail);
 			AssertParallel(Result.Failure, Node.Fail, Node.Running);
 			AssertParallel(Result.Failure, Node.Running, Node.Fail);
+			AssertParallel(Result.Failure, Node.Success, Node.Fail);
+			AssertParallel(Result.Failure, Node.Success, Node.Fail, Node.Success);
+			AssertParallel(Result.Failure, Node.Success, Node.Fail, Node.Running);
+		}
+
+		[Test]
+		public void MemoryFailure()
+		{
+			AssertParallel(Result.Failure, Node.Fail);
+			AssertParallel(Result.Failure, Node.Fail, Node.Success);
+			AssertParallel(Result.Failure, Node.Success, Node.Fail);
+			AssertParallel(Result.Failure, Node.Fail, Node.Running);
 			AssertParallel(Result.Failure, Node.Success, Node.Fail);
 			AssertParallel(Result.Failure, Node.Success, Node.Fail, Node.Success);
 			AssertParallel(Result.Failure, Node.Success, Node.Fail, Node.Running);
@@ -66,20 +87,54 @@ namespace BehaviorTree
 			AssertSeq(Result.Running, Node.Success, Node.Running, Node.Running);
 		}
 
+		[Test]
+		public void MemoryRunning()
+		{
+			var node1CallCount = 0;
+			var node1 = new Node(() =>
+			{
+				node1CallCount++;
+				return Result.Success;
+			});
+
+			var node2CallCount = 0;
+			var node2 = new Node(() =>
+			{
+				node2CallCount++;
+				return node2CallCount > 4 ? Result.Success : Result.Running;
+			});
+
+			var seq = new MemorySequence(node1, node2, node1, node2);
+			AssertMemory(Result.Running, seq);
+			AssertMemory(Result.Running, seq);
+			AssertMemory(Result.Running, seq);
+			AssertMemory(Result.Running, seq);
+			AssertMemory(Result.Success, seq);
+
+			Assert.AreEqual(node1CallCount, 2);
+			Assert.AreEqual(node2CallCount, 6);
+		}
+
 		private void AssertSeq(Result expected, params INode[] nodes)
 		{
-			var seq = new Sequence(nodes);
-			var actual = seq.Run();
-			Assert.AreEqual(expected, actual,
-			   "Sequence .Run returned unexpected result.");
+			AssertSequence(expected, new Sequence(nodes));
 		}
 
 		private void AssertParallel(Result expected, params INode[] nodes)
 		{
-			var seq = new ParallelSequence(nodes);
-			var actual = seq.Run();
+			AssertSequence(expected, new ParallelSequence(nodes));
+		}
+
+		private void AssertMemory(Result expected, params INode[] nodes)
+		{
+			AssertSequence(expected, new MemorySequence(nodes));
+		}
+
+		private void AssertSequence(Result expected, INode sequence)
+		{
+			var actual = sequence.Run();
 			Assert.AreEqual(expected, actual,
-			   "ParralelSequence .Run returned unexpected result.");
+			   "Sequence .Run returned unexpected result.");
 		}
 	}
 }

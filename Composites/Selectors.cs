@@ -12,17 +12,6 @@ namespace BehaviorTree
 		}
 	}
 
-	public class Selector<T> : Composite<T>
-	{
-		public Selector(params INode<T>[] children) : base(children)
-		{ }
-
-		public override Result Run(T data)
-		{
-			return Iterate(data, Result.Failure);
-		}
-	}
-
 	public class ParallelSelector : Composite
 	{
 		public ParallelSelector(params INode[] children) : base(children)
@@ -34,14 +23,16 @@ namespace BehaviorTree
 		}
 	}
 
-	public class ParallelSelector<T> : Composite<T>
+	public class MemorySelector : Composite
 	{
-		public ParallelSelector(params INode<T>[] children) : base(children)
-		{ }
+		private int lastRunningChildIndex = 0;
 
-		public override Result Run(T data)
+		public MemorySelector(params INode[] children) : base(children) { }
+
+		public override Result Run()
 		{
-			return ParallelIterate(data, Result.Failure, Result.Success);
+			return MemoryIterate(Result.Failure,
+				this.lastRunningChildIndex, out this.lastRunningChildIndex);
 		}
 	}
 
@@ -57,21 +48,6 @@ namespace BehaviorTree
 		public override Result Run()
 		{
 			return RandomIterate(Result.Failure, this.indexes);
-		}
-	}
-
-	public class RandomSelector<T> : Composite<T>
-	{
-		private readonly int[] indexes;
-
-		public RandomSelector(params INode<T>[] children) : base(children)
-		{
-			this.indexes = Indexes.Create(children.Length);
-		}
-
-		public override Result Run(T data)
-		{
-			return RandomIterate(data, Result.Failure, this.indexes);
 		}
 	}
 }
