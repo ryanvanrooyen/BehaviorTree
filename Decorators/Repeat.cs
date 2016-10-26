@@ -1,8 +1,12 @@
 ﻿
+using System;
+
 namespace BehaviorTree
 {
 	public class Repeat : Decorator
 	{
+		private readonly TimeSpan? duration;
+		private DateTime? endTime;
 		private readonly uint times;
 		private uint iteration;
 
@@ -12,18 +16,39 @@ namespace BehaviorTree
 			this.iteration = 0;
 		}
 
-		public override Result Run()
+		public Repeat(TimeSpan duration, INode node) : base(node)
 		{
-			var result = base.Run();
+			this.duration = duration;
+		}
+
+		protected override Result RunNode()
+		{
+			var result = this.node.Run();
 
 			if (result != Result.Success)
 				return result;
 
-			this.iteration += 1;
-			if (this.iteration > this.times)
+			if (this.duration.HasValue)
 			{
-				this.iteration = 0;
-				return Result.Success;
+				var currentTime = DateTime.Now;
+
+				if (!this.endTime.HasValue)
+					this.endTime = currentTime + this.duration.Value;
+
+				if (currentTime > this.endTime.Value)
+				{
+					this.endTime = null;
+					return Result.Success;
+				}
+			}
+			else
+			{
+				this.iteration += 1;
+				if (this.iteration > this.times)
+				{
+					this.iteration = 0;
+					return Result.Success;
+				}
 			}
 
 			return Result.Running;

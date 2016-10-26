@@ -3,43 +3,19 @@ namespace BehaviorTree
 {
 	public class Sequence : Composite
 	{
-		private int lastRunningChild;
-
-		public Sequence(params INode[] children) : base(children)
-		{ }
-
-		public override Result Run()
-		{
-			return Iterate(Result.Success, this.lastRunningChild,
-				out this.lastRunningChild);
-		}
+		public Sequence(params INode[] children)
+			: base("Sequence", Result.Success, children) { }
 	}
 
-	public class ParallelSequence : Composite
+	public class RandomSequence : RandomComposite
 	{
-		public ParallelSequence(params INode[] children) : base(children)
-		{ }
-
-		public override Result Run()
-		{
-			return ParallelIterate(Result.Success, Result.Failure);
-		}
+		public RandomSequence(params INode[] children)
+			: base("RandomSequence", Result.Success, children) { }
 	}
 
-	public class RandomSequence : Composite
+	public class ParallelSequence : ParallelComposite
 	{
-		private int lastRunningChild;
-		private readonly int[] indexes;
-
-		public RandomSequence(params INode[] children) : base(children)
-		{
-			this.indexes = Indexes.Create(children.Length);
-		}
-
-		public override Result Run()
-		{
-			return RandomIterate(Result.Success, this.indexes,
-				this.lastRunningChild, out this.lastRunningChild);
-		}
+		public ParallelSequence(params INode[] children)
+			: base("ParallelSequence", Result.Success, children) { }
 	}
 }

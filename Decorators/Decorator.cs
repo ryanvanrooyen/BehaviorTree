@@ -3,21 +3,26 @@ using System;
 
 namespace BehaviorTree
 {
-	public abstract class Decorator : INode
+	public abstract class Decorator : Node
 	{
-		private readonly INode node;
+		protected readonly INode node;
 
-		public Decorator(INode node)
+		public Decorator(INode node) : base("")
 		{
 			if (node == null)
 				throw new ArgumentNullException(nameof(node));
+			if (node.Children != null || node.RunChildrenInParallel)
+				throw new ArgumentException("Decorators currently do not work on Sequence & Selector node types.");
 
 			this.node = node;
 		}
 
-		public virtual Result Run()
+		public override string Name
 		{
-			return this.node.Run();
+			get
+			{
+				return "Decorator(" + this.node.Name + ")";
+			}
 		}
 	}
 }

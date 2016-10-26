@@ -12,9 +12,9 @@ namespace BehaviorTree
 			this.attempt = 0;
 		}
 
-		public override Result Run()
+		protected override Result RunNode()
 		{
-			var result = base.Run();
+			var result = this.node.Run();
 
 			if (result == Result.Success)
 				this.attempt = 0;

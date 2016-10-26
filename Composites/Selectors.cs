@@ -3,43 +3,19 @@ namespace BehaviorTree
 {
 	public class Selector : Composite
 	{
-		private int lastRunningChild;
-
-		public Selector(params INode[] children) : base(children)
-		{ }
-
-		public override Result Run()
-		{
-			return Iterate(Result.Failure, this.lastRunningChild,
-				out this.lastRunningChild);
-		}
+		public Selector(params INode[] children)
+			: base("Selector", Result.Failure, children) { }
 	}
 
-	public class ParallelSelector : Composite
+	public class RandomSelector : RandomComposite
 	{
-		public ParallelSelector(params INode[] children) : base(children)
-		{ }
-
-		public override Result Run()
-		{
-			return ParallelIterate(Result.Failure, Result.Success);
-		}
+		public RandomSelector(params INode[] children)
+			: base("RandomSelector", Result.Failure, children) { }
 	}
 
-	public class RandomSelector : Composite
+	public class ParallelSelector : ParallelComposite
 	{
-		private int lastRunningChild;
-		private readonly int[] indexes;
-
-		public RandomSelector(params INode[] children) : base(children)
-		{
-			this.indexes = Indexes.Create(children.Length);
-		}
-
-		public override Result Run()
-		{
-			return RandomIterate(Result.Failure, this.indexes,
-				this.lastRunningChild, out this.lastRunningChild);
-		}
+		public ParallelSelector(params INode[] children)
+			: base("ParallelSelector", Result.Failure, children) { }
 	}
 }

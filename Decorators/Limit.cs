@@ -19,9 +19,9 @@ namespace BehaviorTree
 			this.time = time;
 		}
 
-		public override Result Run()
+		protected override Result RunNode()
 		{
-			var result = base.Run();
+			var result = this.node.Run();
 
 			if (result != Result.Running)
 			{

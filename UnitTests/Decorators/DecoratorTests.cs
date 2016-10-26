@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace BehaviorTree
 {
 	[TestFixture]
-	public class DecoratorTests
+	public class Decorators
 	{
 		[Test]
 		public void AlwaysConstructor()
@@ -126,7 +126,7 @@ namespace BehaviorTree
 		public void Limit()
 		{
 			var status = Result.Success;
-			INode node = new Node(() => status);
+			INode node = new Act(() => status);
 
 			var time = new MockTime(DateTime.Now);
 			var maxRunTime = TimeSpan.FromSeconds(10);
@@ -193,7 +193,7 @@ namespace BehaviorTree
 		{
 			var currentResult = -1;
 
-			return new Node(() =>
+			return new Act(() =>
 			{
 				currentResult++;
 				if (currentResult >= results.Length)

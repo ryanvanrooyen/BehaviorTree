@@ -31,7 +31,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Node.cs" />
     <Compile Include="Indexes.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Composites\Composite.cs" />
@@ -45,10 +44,19 @@
     <Compile Include="Decorators\Retry.cs" />
     <Compile Include="Decorators\Delay.cs" />
     <Compile Include="Decorators\Limit.cs" />
+    <Compile Include="Nodes\Node.cs" />
+    <Compile Include="Nodes\Behavior.cs" />
+    <Compile Include="Nodes\If.cs" />
+    <Compile Include="Nodes\Act.cs" />
+    <Compile Include="Composites\RandomComposite.cs" />
+    <Compile Include="Composites\ParallelComposite.cs" />
+    <Compile Include="Schedulers\StackScheduler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Composites\" />
     <Folder Include="Decorators\" />
+    <Folder Include="Nodes\" />
+    <Folder Include="Schedulers\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

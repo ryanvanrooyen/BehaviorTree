@@ -15,9 +15,9 @@ namespace BehaviorTree
 			this.result = result;
 		}
 
-		public override Result Run()
+		protected override Result RunNode()
 		{
-			var status = base.Run();
+			var status = this.node.Run();
 			if (status == this.result)
 				return Result.Success;
 

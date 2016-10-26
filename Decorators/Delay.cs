@@ -19,7 +19,7 @@ namespace BehaviorTree
 			this.time = time;
 		}
 
-		public override Result Run()
+		protected override Result RunNode()
 		{
 			var currentTime = this.time.Now;
 
@@ -30,7 +30,7 @@ namespace BehaviorTree
 				return Result.Running;
 
 			this.startTime = null;
-			return base.Run();
+			return this.node.Run();
 		}
 	}
 }

@@ -3,81 +3,76 @@ using System;
 
 namespace BehaviorTree
 {
-	public abstract class Composite : INode
+	public abstract class Composite : Node, INodeObserver
 	{
-		private readonly INode[] children;
+		private Result result;
+		protected readonly Result endResult;
+		protected readonly INode[] children;
+		protected int currentChild;
 
-		public Composite(INode[] children)
+		public Composite(string name, Result endResult, params INode[] children)
+			: base(name)
 		{
 			if (children == null)
 				throw new ArgumentNullException(nameof(children));
 
+			this.endResult = endResult;
 			this.children = children;
+			foreach (var child in this.children)
+				child.AddObserver(this);
 		}
 
-		public abstract Result Run();
+		public override INode[] Children { get { return this.children; } }
 
-		protected Result Iterate(Result endResult, int startIndex, out int stoppedIndex)
+		public void OnStarted(INode node) { }
+
+		public virtual void OnCompleted(INode node, Result result)
 		{
-			stoppedIndex = 0;
-
-			for (var i = startIndex; i < this.children.Length; i++)
+			if (GetCurrentChild() == node)
 			{
-				var status = this.children[i].Run();
-				if (status != endResult)
-				{
-					if (status == Result.Running)
-						stoppedIndex = i;
+				this.result = result;
+				this.currentChild++;
+			}
+		}
 
-					return status;
+		protected override Result RunNode()
+		{
+			if (this.currentChild == 0)
+				this.result = this.endResult;
+
+			while (this.currentChild < this.children.Length && this.result == this.endResult)
+			{
+				var child = GetCurrentChild();
+				this.result = child.Run();
+			}
+
+			if (this.result != Result.Running)
+				this.currentChild = 0;
+
+			return this.result;
+		}
+
+		protected virtual INode GetCurrentChild()
+		{
+			if (this.currentChild < this.children.Length)
+				return this.children[this.currentChild];
+
+			return null;
+		}
+
+		protected int GetChildIndex(INode node)
+		{
+			var index = -1;
+			if (node != null)
+			{
+				for (var i = 0; i < this.children.Length; i++)
+				{
+					if (this.children[i] == node)
+						return i;
 				}
 			}
 
-			return endResult;
-		}
-
-		protected Result ParallelIterate(Result startResult, Result endResult)
-		{
-			var isRunning = false;
-			var hitEndResult = false;
-
-			for (var i = 0; i < this.children.Length; i++)
-			{
-				var status = this.children[i].Run();
-				isRunning = isRunning || status == Result.Running;
-				hitEndResult = hitEndResult || status == endResult;
-			}
-
-			if (hitEndResult)
-				return endResult;
-			else if (isRunning)
-				return Result.Running;
-
-			return startResult;
-		}
-
-		protected Result RandomIterate(Result endResult, int[] indexes,
-			int startIndex, out int stoppedIndex)
-		{
-			stoppedIndex = 0;
-
-			if (startIndex == 0)
-				Indexes.Shuffle(indexes);
-
-			for (var i = startIndex; i < indexes.Length; i++)
-			{
-				var index = indexes[i];
-				var status = this.children[index].Run();
-				if (status != endResult)
-				{
-					if (status == Result.Running)
-						stoppedIndex = i;
-
-					return status;
-				}
-			}
-
-			return endResult;
+			return index;
 		}
 	}
 }
