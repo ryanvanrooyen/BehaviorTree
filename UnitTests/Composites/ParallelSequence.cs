@@ -9,33 +9,52 @@ namespace BehaviorTree.Composites
 		[Test]
 		public void Success()
 		{
-			Asserts.ParallelSeq(Result.Success);
-			Asserts.ParallelSeq(Result.Success, Node.Success);
-			Asserts.ParallelSeq(Result.Success, Node.Success, Node.Success);
-			Asserts.ParallelSeq(Result.Success, Node.Success, Node.Success, Node.Success);
+			Asserts.Success(new ParallelSequence());
+			Asserts.Success(new ParallelSequence(Node.Success));
+			Asserts.Success(new ParallelSequence(new Invert(Node.Fail)));
+			Asserts.Success(new ParallelSequence(Node.Success, Node.Success));
+			Asserts.Success(new ParallelSequence(Node.Success, Node.Success, Node.Success));
 		}
 
 		[Test]
 		public void Failure()
 		{
-			Asserts.ParallelSeq(Result.Failure, Node.Fail);
-			Asserts.ParallelSeq(Result.Failure, Node.Fail, Node.Success);
-			Asserts.ParallelSeq(Result.Failure, Node.Success, Node.Fail);
-			Asserts.ParallelSeq(Result.Failure, Node.Fail, Node.Running);
-			Asserts.ParallelSeq(Result.Failure, Node.Running, Node.Fail);
-			Asserts.ParallelSeq(Result.Failure, Node.Success, Node.Fail);
-			Asserts.ParallelSeq(Result.Failure, Node.Success, Node.Fail, Node.Success);
-			Asserts.ParallelSeq(Result.Failure, Node.Success, Node.Fail, Node.Running);
-			Asserts.ParallelSeq(Result.Failure, Node.Running, Node.Running, Node.Fail);
+			Asserts.Fail(new ParallelSequence(Node.Fail));
+			Asserts.Fail(new ParallelSequence(new Invert(Node.Success)));
+			Asserts.Fail(new ParallelSequence(Node.Fail, Node.Success));
+			Asserts.Fail(new ParallelSequence(Node.Success, Node.Fail));
+			Asserts.Fail(new ParallelSequence(Node.Fail, Node.Running));
+			Asserts.Fail(new ParallelSequence(Node.Running, Node.Fail));
+			Asserts.Fail(new ParallelSequence(Node.Success, Node.Fail));
+			Asserts.Fail(new ParallelSequence(Node.Success, Node.Fail, Node.Success));
+			Asserts.Fail(new ParallelSequence(Node.Success, Node.Fail, Node.Running));
+			Asserts.Fail(new ParallelSequence(Node.Running, Node.Running, Node.Fail));
 		}
 
 		[Test]
 		public void Running()
 		{
-			Asserts.ParallelSeq(Result.Running, Node.Running);
-			Asserts.ParallelSeq(Result.Running, Node.Success, Node.Running);
-			Asserts.ParallelSeq(Result.Running, Node.Success, Node.Running, Node.Success);
-			Asserts.ParallelSeq(Result.Running, Node.Success, Node.Running, Node.Running);
+			Asserts.Running(new ParallelSequence(Node.Running),
+				"Behavior/ParallelSequence/Running");
+			Asserts.Running(new ParallelSequence(Node.Success, Node.Running),
+				"Behavior/ParallelSequence/Success",
+				"Behavior/ParallelSequence/Running");
+			Asserts.Running(new ParallelSequence(Node.Success, Node.Running, Node.Success),
+				"Behavior/ParallelSequence/Success",
+				"Behavior/ParallelSequence/Running",
+				"Behavior/ParallelSequence/Success");
+			Asserts.Running(new ParallelSequence(new Invert(Node.Fail), Node.Running, Node.Running),
+				"Behavior/ParallelSequence/!Fail",
+				"Behavior/ParallelSequence/Running",
+				"Behavior/ParallelSequence/Running");
+			Asserts.Running(new ParallelSequence(Node.Running, Node.Success, Node.Running),
+				"Behavior/ParallelSequence/Running",
+				"Behavior/ParallelSequence/Success",
+				"Behavior/ParallelSequence/Running");
+			Asserts.Running(new ParallelSequence(Node.Running, Node.Running, Node.Success),
+				"Behavior/ParallelSequence/Running",
+				"Behavior/ParallelSequence/Running",
+				"Behavior/ParallelSequence/Success");
 		}
 
 		[Test]
@@ -66,35 +85,20 @@ namespace BehaviorTree.Composites
 
 			var behavior = new Behavior(new ParallelSequence(node1, node2, node3));
 
-			Asserts.Equal(Result.Running, behavior);
-			Assert.AreEqual(true, behavior.HasRunningNodes);
-			Assert.AreEqual(3, behavior.RunningNodePaths.Length);
-			Assert.AreEqual("Behavior/ParallelSequence/Act", behavior.RunningNodePaths[0]);
-			Assert.AreEqual("Behavior/ParallelSequence/Act2", behavior.RunningNodePaths[1]);
-			Assert.AreEqual("Behavior/ParallelSequence/Act", behavior.RunningNodePaths[2]);
+			Asserts.Running(behavior,
+				"Behavior/ParallelSequence/Act",
+				"Behavior/ParallelSequence/Act2",
+				"Behavior/ParallelSequence/Act");
+			Asserts.Counts(1, node1CallCount, node2CallCount, node3CallCount);
 
-			Assert.AreEqual(node1CallCount, 1);
-			Assert.AreEqual(node2CallCount, 1);
-			Assert.AreEqual(node3CallCount, 1);
+			Asserts.Running(behavior,
+				"Behavior/ParallelSequence/Act",
+				"Behavior/ParallelSequence/Act2",
+				"Behavior/ParallelSequence/Act");
+			Asserts.Counts(2, node1CallCount, node2CallCount, node3CallCount);
 
-			Asserts.Equal(Result.Running, behavior);
-			Assert.AreEqual(true, behavior.HasRunningNodes);
-			Assert.AreEqual(3, behavior.RunningNodePaths.Length);
-			Assert.AreEqual("Behavior/ParallelSequence/Act", behavior.RunningNodePaths[0]);
-			Assert.AreEqual("Behavior/ParallelSequence/Act2", behavior.RunningNodePaths[1]);
-			Assert.AreEqual("Behavior/ParallelSequence/Act", behavior.RunningNodePaths[2]);
-
-			Assert.AreEqual(node1CallCount, 2);
-			Assert.AreEqual(node2CallCount, 2);
-			Assert.AreEqual(node3CallCount, 2);
-
-			Asserts.Equal(Result.Success, behavior);
-			Assert.AreEqual(false, behavior.HasRunningNodes);
-			Assert.AreEqual(0, behavior.RunningNodePaths.Length);
-
-			Assert.AreEqual(node1CallCount, 3);
-			Assert.AreEqual(node2CallCount, 3);
-			Assert.AreEqual(node3CallCount, 3);
+			Asserts.Success(behavior);
+			Asserts.Counts(3, node1CallCount, node2CallCount, node3CallCount);
 		}
 
 		[Test]
@@ -125,35 +129,116 @@ namespace BehaviorTree.Composites
 
 			var behavior = new Behavior(new ParallelSequence(node1, node2, node3));
 
-			Asserts.Equal(Result.Running, behavior);
-			Assert.AreEqual(true, behavior.HasRunningNodes);
-			Assert.AreEqual(3, behavior.RunningNodePaths.Length);
-			Assert.AreEqual("Behavior/ParallelSequence/Act1", behavior.RunningNodePaths[0]);
-			Assert.AreEqual("Behavior/ParallelSequence/Act2", behavior.RunningNodePaths[1]);
-			Assert.AreEqual("Behavior/ParallelSequence/Act", behavior.RunningNodePaths[2]);
+			Asserts.Running(behavior,
+				"Behavior/ParallelSequence/Act1",
+				"Behavior/ParallelSequence/Act2",
+				"Behavior/ParallelSequence/Act");
+			Asserts.Counts(1, node1CallCount, node2CallCount, node3CallCount);
 
-			Assert.AreEqual(node1CallCount, 1);
-			Assert.AreEqual(node2CallCount, 1);
-			Assert.AreEqual(node3CallCount, 1);
+			Asserts.Running(behavior,
+				"Behavior/ParallelSequence/Act1",
+				"Behavior/ParallelSequence/Act2",
+				"Behavior/ParallelSequence/Act");
+			Asserts.Counts(2, node1CallCount, node2CallCount, node3CallCount);
 
-			Asserts.Equal(Result.Running, behavior);
-			Assert.AreEqual(true, behavior.HasRunningNodes);
-			Assert.AreEqual(3, behavior.RunningNodePaths.Length);
-			Assert.AreEqual("Behavior/ParallelSequence/Act1", behavior.RunningNodePaths[0]);
-			Assert.AreEqual("Behavior/ParallelSequence/Act2", behavior.RunningNodePaths[1]);
-			Assert.AreEqual("Behavior/ParallelSequence/Act", behavior.RunningNodePaths[2]);
+			Asserts.Fail(behavior);
+			Asserts.Counts(3, node1CallCount, node2CallCount, node3CallCount);
+		}
 
-			Assert.AreEqual(node1CallCount, 2);
-			Assert.AreEqual(node2CallCount, 2);
-			Assert.AreEqual(node3CallCount, 2);
+		[Test]
+		public void DeepTreeRunning()
+		{
+			var behavior = new Behavior(
+				new Sequence(
+					Node.Success,
+					new Selector(Node.Fail,
+						new ParallelSequence(
+							new Sequence(
+								Node.Success,
+								new Selector(
+									Node.Fail,
+									new Sequence(
+										Node.Success,
+										Node.Running,
+										Node.Success))),
+							new Sequence(
+								Node.Success,
+								new Sequence(
+									Node.Success,
+									Node.Success,
+									new Selector(
+										Node.Fail,
+										Node.Running,
+										Node.Fail))))),
+					Node.Success));
 
-			Asserts.Equal(Result.Failure, behavior);
-			Assert.AreEqual(false, behavior.HasRunningNodes);
-			Assert.AreEqual(0, behavior.RunningNodePaths.Length);
+			Asserts.Running(behavior,
+				"Behavior/Sequence/Selector/ParallelSequence/Sequence/Selector/Sequence/Running",
+				"Behavior/Sequence/Selector/ParallelSequence/Sequence/Sequence/Selector/Running");
+		}
 
-			Assert.AreEqual(node1CallCount, 3);
-			Assert.AreEqual(node2CallCount, 3);
-			Assert.AreEqual(node3CallCount, 3);
+		[Test]
+		public void RunningExample1()
+		{
+			var patrol = new Act("Patrol", () => Result.Running);
+			var attackTarget = new Act("Attack", () => Result.Running);
+
+			var canSeeTarget = false;
+
+			var behavior = new Behavior(new Selector(
+				new Sequence(new If("IfCanSeeTarget", () => canSeeTarget),
+					 new ParallelSequence(new If("IfCanSeeTarget", () => canSeeTarget), attackTarget)),
+				new Sequence(new Invert(new If("IfCanSeeTarget", () => canSeeTarget)),
+					new ParallelSequence(new Invert(new If("IfCanSeeTarget", () => canSeeTarget)), patrol))));
+
+			Asserts.Running(behavior,
+				"Behavior/Selector/Sequence/ParallelSequence/!IfCanSeeTarget",
+				"Behavior/Selector/Sequence/ParallelSequence/Patrol");
+
+			canSeeTarget = true;
+
+			Asserts.Fail(behavior);
+
+			Asserts.Running(behavior,
+				"Behavior/Selector/Sequence/ParallelSequence/IfCanSeeTarget",
+				"Behavior/Selector/Sequence/ParallelSequence/Attack");
+
+			canSeeTarget = false;
+
+			Asserts.Running(behavior,
+				"Behavior/Selector/Sequence/ParallelSequence/!IfCanSeeTarget",
+				"Behavior/Selector/Sequence/ParallelSequence/Patrol");
+		}
+
+		[Test]
+		public void WhileExample()
+		{
+			var patrol = new Act("Patrol", () => Result.Running);
+			var attackTarget = new Act("Attack", () => Result.Running);
+
+			var canSeeTarget = false;
+
+			var behavior = new Behavior(new Selector(
+				new While(() => canSeeTarget, attackTarget),
+				new While(() => !canSeeTarget, patrol)));
+
+			Asserts.Running(behavior,
+				"Behavior/Selector/While/Parallel/If",
+				"Behavior/Selector/While/Parallel/Patrol");
+
+			canSeeTarget = true;
+
+			Asserts.Fail(behavior);
+
+			Asserts.Running(behavior,
+				"Behavior/Selector/While/Parallel/If",
+				"Behavior/Selector/While/Parallel/Attack");
+
+			canSeeTarget = false;
+
+			Asserts.Running(behavior,
+				"Behavior/Selector/While/Parallel/If",
+				"Behavior/Selector/While/Parallel/Patrol");
 		}
 	}
 }

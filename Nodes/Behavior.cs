@@ -6,6 +6,7 @@ namespace BehaviorTree
 	public interface IBehavior
 	{
 		Result Run();
+		bool HasRunningNodes { get; }
 		string[] RunningNodePaths { get; }
 	}
 

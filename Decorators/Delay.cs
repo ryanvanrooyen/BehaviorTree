@@ -19,6 +19,14 @@ namespace BehaviorTree
 			this.time = time;
 		}
 
+		public override string Name
+		{
+			get
+			{
+				return "Delay(" + this.delay + ")-" + this.node.Name;
+			}
+		}
+
 		protected override Result RunNode()
 		{
 			var currentTime = this.time.Now;

@@ -6,6 +6,14 @@ namespace BehaviorTree
 		public Invert(INode node) : base(node)
 		{ }
 
+		public override string Name
+		{
+			get
+			{
+				return "!" + this.node.Name;
+			}
+		}
+
 		protected override Result RunNode()
 		{
 			var result = this.node.Run();

@@ -9,29 +9,34 @@ namespace BehaviorTree.Composites
 		[Test]
 		public void Success()
 		{
-			Asserts.Selector(Result.Success, Node.Success);
-			Asserts.Selector(Result.Success, Node.Success, Node.Fail);
-			Asserts.Selector(Result.Success, Node.Success, Node.Running);
-			Asserts.Selector(Result.Success, Node.Fail, Node.Success);
-			Asserts.Selector(Result.Success, Node.Fail, Node.Fail, Node.Success);
+			Asserts.Success(new Selector(Node.Success));
+			Asserts.Success(new Selector(Node.Success, Node.Fail));
+			Asserts.Success(new Selector(Node.Success, Node.Running));
+			Asserts.Success(new Selector(Node.Fail, Node.Success));
+			Asserts.Success(new Selector(Node.Fail, Node.Fail, Node.Success));
 		}
 
 		[Test]
 		public void Failure()
 		{
-			Asserts.Selector(Result.Failure);
-			Asserts.Selector(Result.Failure, Node.Fail);
-			Asserts.Selector(Result.Failure, Node.Fail, Node.Fail);
+			Asserts.Fail(new Selector());
+			Asserts.Fail(new Selector(Node.Fail));
+			Asserts.Fail(new Selector(Node.Fail, Node.Fail));
 		}
 
 		[Test]
 		public void Running()
 		{
-			Asserts.Selector(Result.Running, Node.Running);
-			Asserts.Selector(Result.Running, Node.Fail, Node.Running);
-			Asserts.Selector(Result.Running, Node.Fail, Node.Fail, Node.Running);
-			Asserts.Selector(Result.Running, Node.Fail, Node.Running, Node.Fail);
-			Asserts.Selector(Result.Running, Node.Fail, Node.Running, Node.Success);
+			Asserts.Running(new Selector(Node.Running),
+				"Behavior/Selector/Running");
+			Asserts.Running(new Selector(Node.Fail, Node.Running),
+				"Behavior/Selector/Running");
+			Asserts.Running(new Selector(Node.Fail, Node.Fail, Node.Running),
+				"Behavior/Selector/Running");
+			Asserts.Running(new Selector(Node.Fail, Node.Running, Node.Fail),
+				"Behavior/Selector/Running");
+			Asserts.Running(new Selector(Node.Fail, Node.Running, Node.Success),
+				"Behavior/Selector/Running");
 		}
 
 		[Test]
@@ -60,15 +65,9 @@ namespace BehaviorTree.Composites
 			var behavior = new Behavior(
 				new Selector(node1, node2, node1, node2));
 
-			Asserts.Equal(Result.Running, behavior);
-			Assert.AreEqual(1, behavior.RunningNodePaths.Length);
-			Assert.AreEqual("Behavior/Selector/Act2", behavior.RunningNodePaths[0]);
-
-			Asserts.Equal(Result.Running, behavior);
-			Assert.AreEqual(1, behavior.RunningNodePaths.Length);
-			Assert.AreEqual("Behavior/Selector/Act2", behavior.RunningNodePaths[0]);
-
-			Asserts.Equal(Result.Success, behavior);
+			Asserts.Running(behavior, "Behavior/Selector/Act2");
+			Asserts.Running(behavior, "Behavior/Selector/Act2");
+			Asserts.Success(behavior);
 
 			Assert.AreEqual(node1CallCount, 2);
 			Assert.AreEqual(node2CallCount, 4);

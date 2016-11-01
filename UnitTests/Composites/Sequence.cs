@@ -9,52 +9,58 @@ namespace BehaviorTree.Composites
 		[Test]
 		public void Success()
 		{
-			Asserts.Sequence(Result.Success);
-			Asserts.Sequence(Result.Success, Node.Success);
-			Asserts.Sequence(Result.Success, Node.Success, Node.Success);
-			Asserts.Sequence(Result.Success, Node.Success, Node.Success, Node.Success);
+			Asserts.Success(new Sequence());
+			Asserts.Success(new Sequence(Node.Success));
+			Asserts.Success(new Sequence(Node.Success, Node.Success));
+			Asserts.Success(new Sequence(Node.Success, Node.Success, Node.Success));
 		}
 
 		[Test]
 		public void Failure()
 		{
-			Asserts.Sequence(Result.Failure, Node.Fail);
-			Asserts.Sequence(Result.Failure, Node.Fail, Node.Success);
-			Asserts.Sequence(Result.Failure, Node.Success, Node.Fail);
-			Asserts.Sequence(Result.Failure, Node.Fail, Node.Running);
-			Asserts.Sequence(Result.Failure, Node.Success, Node.Fail);
-			Asserts.Sequence(Result.Failure, Node.Success, Node.Fail, Node.Success);
-			Asserts.Sequence(Result.Failure, Node.Success, Node.Fail, Node.Running);
+			Asserts.Fail(new Sequence(Node.Fail));
+			Asserts.Fail(new Sequence(Node.Fail, Node.Success));
+			Asserts.Fail(new Sequence(Node.Success, Node.Fail));
+			Asserts.Fail(new Sequence(Node.Fail, Node.Running));
+			Asserts.Fail(new Sequence(Node.Success, Node.Fail));
+			Asserts.Fail(new Sequence(Node.Success, Node.Fail, Node.Success));
+			Asserts.Fail(new Sequence(Node.Success, Node.Fail, Node.Running));
 		}
 
 		[Test]
 		public void Running()
 		{
-			Asserts.Sequence(Result.Running, Node.Running);
-			Asserts.Sequence(Result.Running, Node.Success, Node.Running);
-			Asserts.Sequence(Result.Running, Node.Success, Node.Running, Node.Success);
-			Asserts.Sequence(Result.Running, Node.Success, Node.Running, Node.Fail);
+			Asserts.Running(new Sequence(Node.Running),
+				"Behavior/Sequence/Running");
+			Asserts.Running(new Sequence(Node.Success, Node.Running),
+				"Behavior/Sequence/Running");
+			Asserts.Running(new Sequence(Node.Success, Node.Running, Node.Success),
+				"Behavior/Sequence/Running");
+			Asserts.Running(new Sequence(Node.Success, Node.Running, Node.Fail),
+				"Behavior/Sequence/Running");
 		}
 
 		[Test]
-		public void LongRunning()
+		public void LongRunning1()
 		{
 			var callCount = 0;
-			var runOnce = new Act("RunOnce", () =>
+			var runTwice = new Act("RunTwice", () =>
 			{
 				callCount++;
 				return callCount > 2 ? Result.Success : Result.Running;
 			});
 
-			var behavior = new Behavior(new Sequence(Node.Success, runOnce, Node.Fail));
-			Assert.AreEqual(Result.Running, behavior.Run());
-			Assert.AreEqual(1, behavior.RunningNodePaths.Length);
-			Assert.AreEqual("Behavior/Sequence/RunOnce", behavior.RunningNodePaths[0]);
-			Assert.AreEqual(Result.Running, behavior.Run());
-			Assert.AreEqual(Result.Failure, behavior.Run());
-			Assert.AreEqual(Result.Failure, behavior.Run());
+			var behavior = new Behavior(new Sequence(Node.Success, runTwice, Node.Fail));
+			Asserts.Running(behavior, "Behavior/Sequence/RunTwice");
+			Asserts.Running(behavior, "Behavior/Sequence/RunTwice");
+			Asserts.Fail(behavior);
+			Asserts.Fail(behavior);
 			Assert.AreEqual(4, callCount);
+		}
 
+		[Test]
+		public void LongRunning2()
+		{
 			var node1CallCount = 0;
 			var node1 = new Act(() =>
 			{
@@ -72,24 +78,11 @@ namespace BehaviorTree.Composites
 			var seq = new Behavior("Seq",
 				new Sequence(node1, node2, node1, node2));
 
-			Asserts.Equal(Result.Running, seq);
-			Assert.AreEqual(1, seq.RunningNodePaths.Length);
-			Assert.AreEqual("Seq/Sequence/Act2", seq.RunningNodePaths[0]);
-
-			Asserts.Equal(Result.Running, seq);
-			Assert.AreEqual(1, seq.RunningNodePaths.Length);
-			Assert.AreEqual("Seq/Sequence/Act2", seq.RunningNodePaths[0]);
-
-			Asserts.Equal(Result.Running, seq);
-			Assert.AreEqual(1, seq.RunningNodePaths.Length);
-			Assert.AreEqual("Seq/Sequence/Act2", seq.RunningNodePaths[0]);
-
-			Asserts.Equal(Result.Running, seq);
-			Assert.AreEqual(1, seq.RunningNodePaths.Length);
-			Assert.AreEqual("Seq/Sequence/Act2", seq.RunningNodePaths[0]);
-
-			Asserts.Equal(Result.Success, seq);
-			Assert.AreEqual(0, seq.RunningNodePaths.Length);
+			Asserts.Running(seq, "Seq/Sequence/Act2");
+			Asserts.Running(seq, "Seq/Sequence/Act2");
+			Asserts.Running(seq, "Seq/Sequence/Act2");
+			Asserts.Running(seq, "Seq/Sequence/Act2");
+			Asserts.Success(seq);
 
 			Assert.AreEqual(node1CallCount, 2);
 			Assert.AreEqual(node2CallCount, 6);

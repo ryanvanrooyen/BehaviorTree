@@ -21,6 +21,18 @@ namespace BehaviorTree
 			this.duration = duration;
 		}
 
+		public override string Name
+		{
+			get
+			{
+				var limitVal = this.times + "times";
+				if (this.duration.HasValue)
+					limitVal = this.duration.ToString();
+
+				return "Limit(" + limitVal + ")-" + this.node.Name;
+			}
+		}
+
 		protected override Result RunNode()
 		{
 			var result = this.node.Run();

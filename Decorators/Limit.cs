@@ -19,6 +19,14 @@ namespace BehaviorTree
 			this.time = time;
 		}
 
+		public override string Name
+		{
+			get
+			{
+				return "Limit(" + this.maxRunTime + ")-" + this.node.Name;
+			}
+		}
+
 		protected override Result RunNode()
 		{
 			var result = this.node.Run();

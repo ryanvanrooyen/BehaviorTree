@@ -7,7 +7,7 @@ namespace BehaviorTree
 	{
 		protected readonly INode node;
 
-		public Decorator(INode node) : base("")
+		public Decorator(INode node) : base("Decorator")
 		{
 			if (node == null)
 				throw new ArgumentNullException(nameof(node));
@@ -15,14 +15,6 @@ namespace BehaviorTree
 				throw new ArgumentException("Decorators currently do not work on Sequence & Selector node types.");
 
 			this.node = node;
-		}
-
-		public override string Name
-		{
-			get
-			{
-				return "Decorator(" + this.node.Name + ")";
-			}
 		}
 	}
 }

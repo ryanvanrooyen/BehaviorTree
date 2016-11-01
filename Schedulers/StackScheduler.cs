@@ -34,7 +34,7 @@ namespace BehaviorTree
 
 		public void OnCompleted(INode node, Result result)
 		{
-			Remove(node);
+			Remove(node, keepRootNode: this.parent != null);
 		}
 
 		public string[] RunningNodePaths
@@ -115,7 +115,7 @@ namespace BehaviorTree
 			}
 		}
 
-		public void Remove(INode node)
+		public void Remove(INode node, bool keepRootNode)
 		{
 			if (node == null || this.currentNode != node)
 				return;
@@ -127,7 +127,7 @@ namespace BehaviorTree
 			// If this is a sub-scheduler and is the last node,
 			// Leave the node running until the parent clears it
 			// otherwise parallel root nodes won't be re-validated.
-			if (this.runningNodes.Count == 0 && this.parent != null)
+			if (keepRootNode && this.runningNodes.Count == 0)
 				return;
 
 			if (this.currentNode.Children != null)
@@ -137,14 +137,20 @@ namespace BehaviorTree
 			}
 
 			if (this.runningNodes.Count > 0)
+			{
 				this.currentNode = this.runningNodes.Pop();
+			}
 			else
+			{
+				this.currentNode.RemoveObserver(this);
 				this.currentNode = null;
+			}
 		}
 
 		public Result Run()
 		{
-			if (HasRunningSubSchedulers())
+			var hadSubSchedulers = HasRunningSubSchedulers();
+			if (hadSubSchedulers)
 			{
 				for (var i = 0; i < this.subSchedulers.Count; i++)
 					this.subSchedulers[i].Run();
@@ -159,6 +165,13 @@ namespace BehaviorTree
 				result = this.currentNode.Run();
 				if (result == Result.Running)
 					break;
+			}
+
+			// If sub-schedulers were added during the last run
+			// make sure call Run one more time to process them.
+			if (!hadSubSchedulers && HasRunningSubSchedulers())
+			{
+				return Run();
 			}
 
 			return result;
@@ -189,8 +202,8 @@ namespace BehaviorTree
 			for (var i = 0; i < this.subSchedulers.Count; i++)
 			{
 				var subScheduler = this.subSchedulers[i];
-				subScheduler.runningNodes.Clear();
-				subScheduler.currentNode = null;
+				while (subScheduler.currentNode != null)
+					subScheduler.Remove(subScheduler.currentNode, false);
 			}
 		}
 	}

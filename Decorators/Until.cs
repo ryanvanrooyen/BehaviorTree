@@ -15,6 +15,14 @@ namespace BehaviorTree
 			this.result = result;
 		}
 
+		public override string Name
+		{
+			get
+			{
+				return "Until" + this.result + "-" + this.node.Name;
+			}
+		}
+
 		protected override Result RunNode()
 		{
 			var status = this.node.Run();
