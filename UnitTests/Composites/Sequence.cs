@@ -1,4 +1,4 @@
-﻿
+
 using NUnit.Framework;
 
 namespace BehaviorTree.Composites
@@ -31,13 +31,13 @@ namespace BehaviorTree.Composites
 		public void Running()
 		{
 			Asserts.Running(new Sequence(Node.Running),
-				"Behavior/Sequence/Running");
+				"Sequence/Running");
 			Asserts.Running(new Sequence(Node.Success, Node.Running),
-				"Behavior/Sequence/Running");
+				"Sequence/Running");
 			Asserts.Running(new Sequence(Node.Success, Node.Running, Node.Success),
-				"Behavior/Sequence/Running");
+				"Sequence/Running");
 			Asserts.Running(new Sequence(Node.Success, Node.Running, Node.Fail),
-				"Behavior/Sequence/Running");
+				"Sequence/Running");
 		}
 
 		[Test]
@@ -51,8 +51,8 @@ namespace BehaviorTree.Composites
 			});
 
 			var behavior = new Behavior(new Sequence(Node.Success, runTwice, Node.Fail));
-			Asserts.Running(behavior, "Behavior/Sequence/RunTwice");
-			Asserts.Running(behavior, "Behavior/Sequence/RunTwice");
+			Asserts.Running(behavior, "Sequence/RunTwice");
+			Asserts.Running(behavior, "Sequence/RunTwice");
 			Asserts.Fail(behavior);
 			Asserts.Fail(behavior);
 			Assert.AreEqual(4, callCount);
@@ -75,13 +75,12 @@ namespace BehaviorTree.Composites
 				return node2CallCount > 4 ? Result.Success : Result.Running;
 			});
 
-			var seq = new Behavior("Seq",
-				new Sequence(node1, node2, node1, node2));
+			var seq = new Behavior(new Sequence(node1, node2, node1, node2));
 
-			Asserts.Running(seq, "Seq/Sequence/Act2");
-			Asserts.Running(seq, "Seq/Sequence/Act2");
-			Asserts.Running(seq, "Seq/Sequence/Act2");
-			Asserts.Running(seq, "Seq/Sequence/Act2");
+			Asserts.Running(seq, "Sequence/Act2");
+			Asserts.Running(seq, "Sequence/Act2");
+			Asserts.Running(seq, "Sequence/Act2");
+			Asserts.Running(seq, "Sequence/Act2");
 			Asserts.Success(seq);
 
 			Assert.AreEqual(node1CallCount, 2);
@@ -113,7 +112,7 @@ namespace BehaviorTree.Composites
 
 			Assert.AreEqual(Result.Running, behavior.Run());
 			Assert.AreEqual(1, behavior.RunningNodePaths.Length);
-			Assert.AreEqual("Behavior/Sequence/Sequence/Sequence/Act",
+			Assert.AreEqual("Sequence/Sequence/Sequence/Act",
 				behavior.RunningNodePaths[0]);
 
 			Assert.AreEqual(8, onStartCount);
@@ -124,7 +123,7 @@ namespace BehaviorTree.Composites
 
 			Assert.AreEqual(Result.Running, behavior.Run());
 			Assert.AreEqual(1, behavior.RunningNodePaths.Length);
-			Assert.AreEqual("Behavior/Sequence/Sequence/Sequence/Act",
+			Assert.AreEqual("Sequence/Sequence/Sequence/Act",
 				behavior.RunningNodePaths[0]);
 
 			Assert.AreEqual(0, onStartCount);
@@ -134,7 +133,7 @@ namespace BehaviorTree.Composites
 
 			Assert.AreEqual(Result.Running, behavior.Run());
 			Assert.AreEqual(1, behavior.RunningNodePaths.Length);
-			Assert.AreEqual("Behavior/Sequence/Sequence/Sequence/Act",
+			Assert.AreEqual("Sequence/Sequence/Sequence/Act",
 				behavior.RunningNodePaths[0]);
 
 			Assert.AreEqual(1, onStartCount);

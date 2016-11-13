@@ -203,7 +203,10 @@ namespace BehaviorTree
 			{
 				var subScheduler = this.subSchedulers[i];
 				while (subScheduler.currentNode != null)
+				{
+					subScheduler.currentNode.Reset();
 					subScheduler.Remove(subScheduler.currentNode, false);
+				}
 			}
 		}
 	}

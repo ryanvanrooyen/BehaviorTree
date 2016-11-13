@@ -5,6 +5,7 @@ namespace BehaviorTree
 {
 	public class Repeat : Decorator
 	{
+		private readonly ITime time;
 		private readonly TimeSpan? duration;
 		private DateTime? endTime;
 		private readonly uint times;
@@ -16,9 +17,13 @@ namespace BehaviorTree
 			this.iteration = 0;
 		}
 
-		public Repeat(TimeSpan duration, INode node) : base(node)
+		public Repeat(TimeSpan duration, INode node)
+			: this(duration, node, Time.Real) { }
+
+		internal Repeat(TimeSpan duration, INode node, ITime time) : base(node)
 		{
 			this.duration = duration;
+			this.time = time;
 		}
 
 		public override string Name
@@ -27,10 +32,17 @@ namespace BehaviorTree
 			{
 				var limitVal = this.times + "times";
 				if (this.duration.HasValue)
-					limitVal = this.duration.ToString();
+					limitVal = this.duration.Value.TotalSeconds + "secs";
 
-				return "Limit(" + limitVal + ")-" + this.node.Name;
+				return this.node.Name + "(Repeat" + limitVal + ")";
 			}
+		}
+
+		public override void Reset()
+		{
+			base.Reset();
+			this.endTime = null;
+			this.iteration = 0;
 		}
 
 		protected override Result RunNode()
@@ -42,7 +54,7 @@ namespace BehaviorTree
 
 			if (this.duration.HasValue)
 			{
-				var currentTime = DateTime.Now;
+				var currentTime = this.time.Now;
 
 				if (!this.endTime.HasValue)
 					this.endTime = currentTime + this.duration.Value;

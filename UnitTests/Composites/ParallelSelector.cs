@@ -1,4 +1,4 @@
-﻿
+
 using NUnit.Framework;
 
 namespace BehaviorTree.Composites
@@ -28,33 +28,33 @@ namespace BehaviorTree.Composites
 		public void Running()
 		{
 			Asserts.Running(new ParallelSelector(Node.Running),
-				"Behavior/ParallelSelector/Running");
+				"ParallelSelector/Running");
 			Asserts.Running(new ParallelSelector(Node.Fail, Node.Running),
-				"Behavior/ParallelSelector/Fail",
-				"Behavior/ParallelSelector/Running");
+				"ParallelSelector/Fail",
+				"ParallelSelector/Running");
 			Asserts.Running(new ParallelSelector(Node.Running, Node.Fail),
-				"Behavior/ParallelSelector/Running",
-				"Behavior/ParallelSelector/Fail");
+				"ParallelSelector/Running",
+				"ParallelSelector/Fail");
 			Asserts.Running(new ParallelSelector(Node.Fail, Node.Fail, Node.Running),
-				"Behavior/ParallelSelector/Fail",
-				"Behavior/ParallelSelector/Fail",
-				"Behavior/ParallelSelector/Running");
+				"ParallelSelector/Fail",
+				"ParallelSelector/Fail",
+				"ParallelSelector/Running");
 			Asserts.Running(new ParallelSelector(Node.Fail, Node.Running, Node.Fail),
-				"Behavior/ParallelSelector/Fail",
-				"Behavior/ParallelSelector/Running",
-				"Behavior/ParallelSelector/Fail");
+				"ParallelSelector/Fail",
+				"ParallelSelector/Running",
+				"ParallelSelector/Fail");
 			Asserts.Running(new ParallelSelector(Node.Fail, Node.Running, Node.Running),
-				"Behavior/ParallelSelector/Fail",
-				"Behavior/ParallelSelector/Running",
-				"Behavior/ParallelSelector/Running");
+				"ParallelSelector/Fail",
+				"ParallelSelector/Running",
+				"ParallelSelector/Running");
 			Asserts.Running(new ParallelSelector(Node.Running, Node.Fail, Node.Running),
-				"Behavior/ParallelSelector/Running",
-				"Behavior/ParallelSelector/Fail",
-				"Behavior/ParallelSelector/Running");
+				"ParallelSelector/Running",
+				"ParallelSelector/Fail",
+				"ParallelSelector/Running");
 			Asserts.Running(new ParallelSelector(Node.Running, Node.Running, Node.Fail),
-				"Behavior/ParallelSelector/Running",
-				"Behavior/ParallelSelector/Running",
-				"Behavior/ParallelSelector/Fail");
+				"ParallelSelector/Running",
+				"ParallelSelector/Running",
+				"ParallelSelector/Fail");
 		}
 
 		[Test]
@@ -86,15 +86,15 @@ namespace BehaviorTree.Composites
 			var behavior = new Behavior(new ParallelSelector(node1, node2, node3));
 
 			Asserts.Running(behavior,
-				"Behavior/ParallelSelector/Act1",
-				"Behavior/ParallelSelector/Act2",
-				"Behavior/ParallelSelector/Act");
+				"ParallelSelector/Act1",
+				"ParallelSelector/Act2",
+				"ParallelSelector/Act");
 			Asserts.Counts(1, node1CallCount, node2CallCount, node3CallCount);
 
 			Asserts.Running(behavior,
-				"Behavior/ParallelSelector/Act1",
-				"Behavior/ParallelSelector/Act2",
-				"Behavior/ParallelSelector/Act");
+				"ParallelSelector/Act1",
+				"ParallelSelector/Act2",
+				"ParallelSelector/Act");
 			Asserts.Counts(2, node1CallCount, node2CallCount, node3CallCount);
 
 			Asserts.Success(behavior);
@@ -130,15 +130,15 @@ namespace BehaviorTree.Composites
 			var behavior = new Behavior(new ParallelSelector(node1, node2, node3));
 
 			Asserts.Running(behavior,
-				"Behavior/ParallelSelector/Act",
-				"Behavior/ParallelSelector/Act2",
-				"Behavior/ParallelSelector/Act");
+				"ParallelSelector/Act",
+				"ParallelSelector/Act2",
+				"ParallelSelector/Act");
 			Asserts.Counts(1, node1CallCount, node2CallCount, node3CallCount);
 
 			Asserts.Running(behavior,
-				"Behavior/ParallelSelector/Act",
-				"Behavior/ParallelSelector/Act2",
-				"Behavior/ParallelSelector/Act");
+				"ParallelSelector/Act",
+				"ParallelSelector/Act2",
+				"ParallelSelector/Act");
 			Asserts.Counts(2, node1CallCount, node2CallCount, node3CallCount);
 
 			Asserts.Fail(behavior);

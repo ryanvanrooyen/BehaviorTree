@@ -1,4 +1,4 @@
-﻿
+
 using NUnit.Framework;
 
 namespace BehaviorTree.Composites
@@ -35,26 +35,26 @@ namespace BehaviorTree.Composites
 		public void Running()
 		{
 			Asserts.Running(new ParallelSequence(Node.Running),
-				"Behavior/ParallelSequence/Running");
+				"ParallelSequence/Running");
 			Asserts.Running(new ParallelSequence(Node.Success, Node.Running),
-				"Behavior/ParallelSequence/Success",
-				"Behavior/ParallelSequence/Running");
+				"ParallelSequence/Success",
+				"ParallelSequence/Running");
 			Asserts.Running(new ParallelSequence(Node.Success, Node.Running, Node.Success),
-				"Behavior/ParallelSequence/Success",
-				"Behavior/ParallelSequence/Running",
-				"Behavior/ParallelSequence/Success");
+				"ParallelSequence/Success",
+				"ParallelSequence/Running",
+				"ParallelSequence/Success");
 			Asserts.Running(new ParallelSequence(new Invert(Node.Fail), Node.Running, Node.Running),
-				"Behavior/ParallelSequence/!Fail",
-				"Behavior/ParallelSequence/Running",
-				"Behavior/ParallelSequence/Running");
+				"ParallelSequence/!Fail",
+				"ParallelSequence/Running",
+				"ParallelSequence/Running");
 			Asserts.Running(new ParallelSequence(Node.Running, Node.Success, Node.Running),
-				"Behavior/ParallelSequence/Running",
-				"Behavior/ParallelSequence/Success",
-				"Behavior/ParallelSequence/Running");
+				"ParallelSequence/Running",
+				"ParallelSequence/Success",
+				"ParallelSequence/Running");
 			Asserts.Running(new ParallelSequence(Node.Running, Node.Running, Node.Success),
-				"Behavior/ParallelSequence/Running",
-				"Behavior/ParallelSequence/Running",
-				"Behavior/ParallelSequence/Success");
+				"ParallelSequence/Running",
+				"ParallelSequence/Running",
+				"ParallelSequence/Success");
 		}
 
 		[Test]
@@ -86,15 +86,15 @@ namespace BehaviorTree.Composites
 			var behavior = new Behavior(new ParallelSequence(node1, node2, node3));
 
 			Asserts.Running(behavior,
-				"Behavior/ParallelSequence/Act",
-				"Behavior/ParallelSequence/Act2",
-				"Behavior/ParallelSequence/Act");
+				"ParallelSequence/Act",
+				"ParallelSequence/Act2",
+				"ParallelSequence/Act");
 			Asserts.Counts(1, node1CallCount, node2CallCount, node3CallCount);
 
 			Asserts.Running(behavior,
-				"Behavior/ParallelSequence/Act",
-				"Behavior/ParallelSequence/Act2",
-				"Behavior/ParallelSequence/Act");
+				"ParallelSequence/Act",
+				"ParallelSequence/Act2",
+				"ParallelSequence/Act");
 			Asserts.Counts(2, node1CallCount, node2CallCount, node3CallCount);
 
 			Asserts.Success(behavior);
@@ -130,15 +130,15 @@ namespace BehaviorTree.Composites
 			var behavior = new Behavior(new ParallelSequence(node1, node2, node3));
 
 			Asserts.Running(behavior,
-				"Behavior/ParallelSequence/Act1",
-				"Behavior/ParallelSequence/Act2",
-				"Behavior/ParallelSequence/Act");
+				"ParallelSequence/Act1",
+				"ParallelSequence/Act2",
+				"ParallelSequence/Act");
 			Asserts.Counts(1, node1CallCount, node2CallCount, node3CallCount);
 
 			Asserts.Running(behavior,
-				"Behavior/ParallelSequence/Act1",
-				"Behavior/ParallelSequence/Act2",
-				"Behavior/ParallelSequence/Act");
+				"ParallelSequence/Act1",
+				"ParallelSequence/Act2",
+				"ParallelSequence/Act");
 			Asserts.Counts(2, node1CallCount, node2CallCount, node3CallCount);
 
 			Asserts.Fail(behavior);
@@ -173,8 +173,8 @@ namespace BehaviorTree.Composites
 					Node.Success));
 
 			Asserts.Running(behavior,
-				"Behavior/Sequence/Selector/ParallelSequence/Sequence/Selector/Sequence/Running",
-				"Behavior/Sequence/Selector/ParallelSequence/Sequence/Sequence/Selector/Running");
+				"Sequence/Selector/ParallelSequence/Sequence/Selector/Sequence/Running",
+				"Sequence/Selector/ParallelSequence/Sequence/Sequence/Selector/Running");
 		}
 
 		[Test]
@@ -192,26 +192,87 @@ namespace BehaviorTree.Composites
 					new ParallelSequence(new Invert(new If("IfCanSeeTarget", () => canSeeTarget)), patrol))));
 
 			Asserts.Running(behavior,
-				"Behavior/Selector/Sequence/ParallelSequence/!IfCanSeeTarget",
-				"Behavior/Selector/Sequence/ParallelSequence/Patrol");
+				"Selector/Sequence/ParallelSequence/!IfCanSeeTarget",
+				"Selector/Sequence/ParallelSequence/Patrol");
 
 			canSeeTarget = true;
 
 			Asserts.Fail(behavior);
 
 			Asserts.Running(behavior,
-				"Behavior/Selector/Sequence/ParallelSequence/IfCanSeeTarget",
-				"Behavior/Selector/Sequence/ParallelSequence/Attack");
+				"Selector/Sequence/ParallelSequence/IfCanSeeTarget",
+				"Selector/Sequence/ParallelSequence/Attack");
 
 			canSeeTarget = false;
 
 			Asserts.Running(behavior,
-				"Behavior/Selector/Sequence/ParallelSequence/!IfCanSeeTarget",
-				"Behavior/Selector/Sequence/ParallelSequence/Patrol");
+				"Selector/Sequence/ParallelSequence/!IfCanSeeTarget",
+				"Selector/Sequence/ParallelSequence/Patrol");
 		}
 
 		[Test]
-		public void WhileExample()
+		public void WhileExample1()
+		{
+			var attack1Count = 0;
+			var attack2Count = 0;
+
+			var attackTarget = new Sequence(
+				new Act("Attack1", () => { attack1Count++; return Result.Success; }),
+				new Act("Attack2", () => { attack2Count++; return Result.Running; }));
+
+			var canSeeTarget = false;
+
+			var behavior = new Behavior(new While(() => canSeeTarget, attackTarget));
+
+			Asserts.Fail(behavior);
+			Asserts.Counts(0, attack1Count, attack2Count);
+			Asserts.Fail(behavior);
+			Asserts.Counts(0, attack1Count, attack2Count);
+
+			canSeeTarget = true;
+
+			Asserts.Running(behavior,
+				"While/Parallel/If",
+				"While/Parallel/Sequence/Attack2");
+
+			Asserts.Counts(1, attack1Count, attack2Count);
+
+			Asserts.Running(behavior,
+				"While/Parallel/If",
+				"While/Parallel/Sequence/Attack2");
+
+			Asserts.Counts(1, attack1Count);
+			Asserts.Counts(2, attack2Count);
+
+			canSeeTarget = false;
+
+			Asserts.Fail(behavior);
+			Asserts.Counts(1, attack1Count);
+			Asserts.Counts(3, attack2Count);
+
+			Asserts.Fail(behavior);
+			Asserts.Counts(1, attack1Count);
+			Asserts.Counts(3, attack2Count);
+
+			canSeeTarget = true;
+
+			Asserts.Running(behavior,
+				"While/Parallel/If",
+				"While/Parallel/Sequence/Attack2");
+
+			Asserts.Counts(2, attack1Count);
+			Asserts.Counts(4, attack2Count);
+
+			Asserts.Running(behavior,
+				"While/Parallel/If",
+				"While/Parallel/Sequence/Attack2");
+
+			Asserts.Counts(2, attack1Count);
+			Asserts.Counts(5, attack2Count);
+		}
+
+		[Test]
+		public void WhileExample2()
 		{
 			var patrol = new Act("Patrol", () => Result.Running);
 			var attackTarget = new Act("Attack", () => Result.Running);
@@ -223,22 +284,22 @@ namespace BehaviorTree.Composites
 				new While(() => !canSeeTarget, patrol)));
 
 			Asserts.Running(behavior,
-				"Behavior/Selector/While/Parallel/If",
-				"Behavior/Selector/While/Parallel/Patrol");
+				"Selector/While/Parallel/If",
+				"Selector/While/Parallel/Patrol");
 
 			canSeeTarget = true;
 
 			Asserts.Fail(behavior);
 
 			Asserts.Running(behavior,
-				"Behavior/Selector/While/Parallel/If",
-				"Behavior/Selector/While/Parallel/Attack");
+				"Selector/While/Parallel/If",
+				"Selector/While/Parallel/Attack");
 
 			canSeeTarget = false;
 
 			Asserts.Running(behavior,
-				"Behavior/Selector/While/Parallel/If",
-				"Behavior/Selector/While/Parallel/Patrol");
+				"Selector/While/Parallel/If",
+				"Selector/While/Parallel/Patrol");
 		}
 	}
 }

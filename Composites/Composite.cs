@@ -26,6 +26,12 @@ namespace BehaviorTree
 
 		public void OnStarted(INode node) { }
 
+		public override void Reset()
+		{
+			base.Reset();
+			this.currentChild = 0;
+		}
+
 		public virtual void OnCompleted(INode node, Result result)
 		{
 			if (GetCurrentChild() == node)

@@ -16,8 +16,14 @@ namespace BehaviorTree
 		{
 			get
 			{
-				return "Retry(" + this.maxAttempts + "times)-" + this.node.Name;
+				return this.node.Name + "(Retry" + this.maxAttempts + "times)";
 			}
+		}
+
+		public override void Reset()
+		{
+			base.Reset();
+			this.attempt = 0;
 		}
 
 		protected override Result RunNode()

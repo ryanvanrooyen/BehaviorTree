@@ -23,8 +23,14 @@ namespace BehaviorTree
 		{
 			get
 			{
-				return "Limit(" + this.maxRunTime + ")-" + this.node.Name;
+				return this.node.Name + "(Limit" + this.maxRunTime.TotalSeconds + "secs)";
 			}
+		}
+
+		public override void Reset()
+		{
+			base.Reset();
+			this.endTime = null;
 		}
 
 		protected override Result RunNode()

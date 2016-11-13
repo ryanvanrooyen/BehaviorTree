@@ -15,6 +15,12 @@ namespace BehaviorTree
 
 		public override bool RunChildrenInParallel { get { return true; } }
 
+		public override void Reset()
+		{
+			base.Reset();
+			ResetResults();
+		}
+
 		public override void OnCompleted(INode node, Result result)
 		{
 			var childIndex = GetChildIndex(node);

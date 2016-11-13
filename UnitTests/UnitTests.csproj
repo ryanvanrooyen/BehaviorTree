@@ -37,6 +37,8 @@
     <Compile Include="Decorators\DecoratorTests.cs" />
     <Compile Include="Composites\ParallelSequence.cs" />
     <Compile Include="Composites\ParallelSelector.cs" />
+    <Compile Include="Decorators\WaitTests.cs" />
+    <Compile Include="SchedulerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BehaviorTree.csproj">

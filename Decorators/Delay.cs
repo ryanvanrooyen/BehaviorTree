@@ -23,8 +23,14 @@ namespace BehaviorTree
 		{
 			get
 			{
-				return "Delay(" + this.delay + ")-" + this.node.Name;
+				return "Delay(" + this.delay.TotalSeconds + "secs)Then" + this.node.Name;
 			}
+		}
+
+		public override void Reset()
+		{
+			base.Reset();
+			this.startTime = null;
 		}
 
 		protected override Result RunNode()

@@ -16,5 +16,11 @@ namespace BehaviorTree
 
 			this.node = node;
 		}
+
+		public override void Reset()
+		{
+			base.Reset();
+			this.node.Reset();
+		}
 	}
 }

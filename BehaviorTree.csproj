@@ -18,6 +18,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command>
+          <type>AfterBuild</type>
+          <command>cp bin/Debug/BehaviorTree.dll bin/Debug/BehaviorTree.dll.mdb ../Entity/Dependencies</command>
+          <workingdir>${SolutionDir}</workingdir>
+        </Command>
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -50,14 +59,13 @@
     <Compile Include="Nodes\Act.cs" />
     <Compile Include="Composites\RandomComposite.cs" />
     <Compile Include="Composites\ParallelComposite.cs" />
-    <Compile Include="Schedulers\StackScheduler.cs" />
     <Compile Include="Decorators\Wait.cs" />
+    <Compile Include="StackScheduler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Composites\" />
     <Folder Include="Decorators\" />
     <Folder Include="Nodes\" />
-    <Folder Include="Schedulers\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

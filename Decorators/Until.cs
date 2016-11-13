@@ -19,7 +19,7 @@ namespace BehaviorTree
 		{
 			get
 			{
-				return "Until" + this.result + "-" + this.node.Name;
+				return this.node.Name + "(Until" + this.result + ")";
 			}
 		}
 

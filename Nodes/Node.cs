@@ -19,6 +19,7 @@ namespace BehaviorTree
 		bool RunChildrenInParallel { get; }
 		void AddObserver(INodeObserver observer);
 		void RemoveObserver(INodeObserver observer);
+		void Reset();
 	}
 
 	public interface INodeObserver
@@ -51,6 +52,11 @@ namespace BehaviorTree
 		public virtual string Name { get { return this.name; } }
 		public virtual INode[] Children { get { return null; } }
 		public virtual bool RunChildrenInParallel { get { return false; } }
+
+		public virtual void Reset()
+		{
+			this.hasStarted = false;
+		}
 
 		public void AddObserver(INodeObserver observer)
 		{

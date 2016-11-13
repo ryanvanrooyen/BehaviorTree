@@ -1,4 +1,4 @@
-﻿
+
 using NUnit.Framework;
 
 namespace BehaviorTree.Composites
@@ -28,15 +28,15 @@ namespace BehaviorTree.Composites
 		public void Running()
 		{
 			Asserts.Running(new Selector(Node.Running),
-				"Behavior/Selector/Running");
+				"Selector/Running");
 			Asserts.Running(new Selector(Node.Fail, Node.Running),
-				"Behavior/Selector/Running");
+				"Selector/Running");
 			Asserts.Running(new Selector(Node.Fail, Node.Fail, Node.Running),
-				"Behavior/Selector/Running");
+				"Selector/Running");
 			Asserts.Running(new Selector(Node.Fail, Node.Running, Node.Fail),
-				"Behavior/Selector/Running");
+				"Selector/Running");
 			Asserts.Running(new Selector(Node.Fail, Node.Running, Node.Success),
-				"Behavior/Selector/Running");
+				"Selector/Running");
 		}
 
 		[Test]
@@ -65,8 +65,8 @@ namespace BehaviorTree.Composites
 			var behavior = new Behavior(
 				new Selector(node1, node2, node1, node2));
 
-			Asserts.Running(behavior, "Behavior/Selector/Act2");
-			Asserts.Running(behavior, "Behavior/Selector/Act2");
+			Asserts.Running(behavior, "Selector/Act2");
+			Asserts.Running(behavior, "Selector/Act2");
 			Asserts.Success(behavior);
 
 			Assert.AreEqual(node1CallCount, 2);

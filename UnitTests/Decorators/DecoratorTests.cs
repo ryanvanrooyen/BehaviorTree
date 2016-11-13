@@ -209,15 +209,17 @@ namespace BehaviorTree
 			Assert.AreEqual(expected, actual,
 			   "Node .Run returned unexpected result.");
 		}
+	}
 
-		private class MockTime : ITime
+	internal class MockTime : ITime
+	{
+		public MockTime() : this(DateTime.Now) { }
+
+		public MockTime(DateTime now)
 		{
-			public MockTime(DateTime now)
-			{
-				this.Now = now;
-			}
-
-			public DateTime Now { get; set; }
+			this.Now = now;
 		}
+
+		public DateTime Now { get; set; }
 	}
 }

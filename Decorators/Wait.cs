@@ -24,8 +24,14 @@ namespace BehaviorTree
 		{
 			get
 			{
-				return "Wait(" + this.waitTime + ")-" + this.node.Name;
+				return this.node.Name + "(ThenWait" + this.waitTime.TotalSeconds + "secs)";
 			}
+		}
+
+		public override void Reset()
+		{
+			base.Reset();
+			this.result = null;
 		}
 
 		protected override Result RunNode()
