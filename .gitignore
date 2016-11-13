@@ -6,6 +6,7 @@
 obj
 bin
 test-results
+packages
 
 # Upgrade Files
 _UpgradeReport_Files
