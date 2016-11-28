@@ -61,6 +61,7 @@
     <Compile Include="Composites\ParallelComposite.cs" />
     <Compile Include="Decorators\Wait.cs" />
     <Compile Include="StackScheduler.cs" />
+    <Compile Include="Composites\While.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Composites\" />

@@ -21,9 +21,9 @@ namespace BehaviorTree
 		public Behavior(INode rootNode, IScheduler scheduler)
 		{
 			if (rootNode == null)
-				throw new ArgumentNullException(nameof(rootNode));
+				throw new ArgumentNullException("rootNode");
 			if (scheduler == null)
-				throw new ArgumentNullException(nameof(scheduler));
+				throw new ArgumentNullException("scheduler");
 
 			this.rootNode = rootNode;
 			this.scheduler = scheduler;

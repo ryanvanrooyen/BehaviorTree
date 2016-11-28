@@ -278,28 +278,25 @@ namespace BehaviorTree.Composites
 			var attackTarget = new Act("Attack", () => Result.Running);
 
 			var canSeeTarget = false;
-
-			var behavior = new Behavior(new Selector(
-				new While(() => canSeeTarget, attackTarget),
-				new While(() => !canSeeTarget, patrol)));
+			var behavior = new Behavior(new While(() => canSeeTarget, attackTarget, patrol));
 
 			Asserts.Running(behavior,
-				"Selector/While/Parallel/If",
-				"Selector/While/Parallel/Patrol");
+				"While/Sequence/Parallel/!If",
+				"While/Sequence/Parallel/Patrol");
 
 			canSeeTarget = true;
 
 			Asserts.Fail(behavior);
 
 			Asserts.Running(behavior,
-				"Selector/While/Parallel/If",
-				"Selector/While/Parallel/Attack");
+				"While/Sequence/Parallel/If",
+				"While/Sequence/Parallel/Attack");
 
 			canSeeTarget = false;
 
 			Asserts.Running(behavior,
-				"Selector/While/Parallel/If",
-				"Selector/While/Parallel/Patrol");
+				"While/Sequence/Parallel/!If",
+				"While/Sequence/Parallel/Patrol");
 		}
 	}
 }

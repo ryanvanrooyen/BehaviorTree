@@ -14,7 +14,7 @@ namespace BehaviorTree
 			: base(name)
 		{
 			if (children == null)
-				throw new ArgumentNullException(nameof(children));
+				throw new ArgumentNullException("children");
 
 			this.endResult = endResult;
 			this.children = children;

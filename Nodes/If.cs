@@ -12,7 +12,7 @@ namespace BehaviorTree
 		public If(string name, Delegates.Func<bool> condition) : base(name)
 		{
 			if (condition == null)
-				throw new ArgumentNullException(nameof(condition));
+				throw new ArgumentNullException("condition");
 
 			this.condition = condition;
 		}

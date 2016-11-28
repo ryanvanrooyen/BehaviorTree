@@ -44,7 +44,7 @@ namespace BehaviorTree
 		public Node(string name)
 		{
 			if (name == null)
-				throw new ArgumentNullException(nameof(name));
+				throw new ArgumentNullException("name");
 
 			this.name = name;
 		}

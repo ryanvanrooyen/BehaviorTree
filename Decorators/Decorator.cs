@@ -10,7 +10,7 @@ namespace BehaviorTree
 		public Decorator(INode node) : base("Decorator")
 		{
 			if (node == null)
-				throw new ArgumentNullException(nameof(node));
+				throw new ArgumentNullException("node");
 			if (node.Children != null || node.RunChildrenInParallel)
 				throw new ArgumentException("Decorators currently do not work on Sequence & Selector node types.");
 

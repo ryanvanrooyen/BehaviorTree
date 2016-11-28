@@ -27,13 +27,4 @@ namespace BehaviorTree
 		public ParallelSequence(string name, params INode[] children)
 			: base(name, Result.Success, children) { }
 	}
-
-	public class While : Sequence
-	{
-		public While(Delegates.Func<bool> condition, INode longRunningAction)
-			: base("While", new If(condition),
-					new ParallelSequence("Parallel", new If(condition), longRunningAction))
-		{
-		}
-	}
 }
