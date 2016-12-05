@@ -34,7 +34,9 @@ namespace BehaviorTree
 
 		public void OnCompleted(INode node, Result result)
 		{
-			Remove(node, keepRootNode: this.parent != null);
+			Remove(node, keepRootNode: this.parent != null &&
+		       this.parent.currentNode != null &&
+		       this.parent.currentNode.ChildRunPolicy == ChildRunPolicy.ParallelRevalidate);
 		}
 
 		public string[] RunningNodePaths
@@ -100,7 +102,8 @@ namespace BehaviorTree
 			if (children == null || children.Length == 0)
 				return;
 
-			if (node.RunChildrenInParallel)
+			var runChildrenInParallel = node.ChildRunPolicy != ChildRunPolicy.Sequential;
+			if (runChildrenInParallel)
 			{
 				for (var i = 0; i < children.Length; i++)
 				{

@@ -25,6 +25,12 @@ namespace BehaviorTree
 			: this("ParallelSequence", children) { }
 
 		public ParallelSequence(string name, params INode[] children)
-			: base(name, Result.Success, children) { }
+			: base(name, Result.Success, ChildRunPolicy.ParallelOnce, children) { }
+
+		public ParallelSequence(ChildRunPolicy runPolicy, params INode[] children)
+			: base("ParallelSequence", Result.Success, runPolicy, children) { }
+		
+		public ParallelSequence(string name, ChildRunPolicy runPolicy, params INode[] children)
+			: base(name, Result.Success, runPolicy, children) { }
 	}
 }

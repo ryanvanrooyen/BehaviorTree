@@ -1,19 +1,27 @@
 ﻿
+using System;
+
 namespace BehaviorTree
 {
 	public abstract class ParallelComposite : Composite
 	{
+		private readonly ChildRunPolicy childRunPolicy;
 		private readonly Result[] results;
 		private Result totalResult;
 
-		public ParallelComposite(string name, Result endResult, params INode[] children)
+		public ParallelComposite(string name, Result endResult,
+			ChildRunPolicy childRunPolicy, params INode[] children)
 			: base(name, endResult, children)
 		{
+			if (childRunPolicy == ChildRunPolicy.Sequential)
+				throw new ArgumentException("Child run policy cannot be sequential for parallel composites.");
+			
+			this.childRunPolicy = childRunPolicy;
 			this.results = new Result[children.Length];
 			ResetResults();
 		}
 
-		public override bool RunChildrenInParallel { get { return true; } }
+		public override ChildRunPolicy ChildRunPolicy { get { return this.childRunPolicy; } }
 
 		public override void Reset()
 		{

@@ -11,8 +11,8 @@ namespace BehaviorTree
 		{
 			if (node == null)
 				throw new ArgumentNullException("node");
-			if (node.Children != null || node.RunChildrenInParallel)
-				throw new ArgumentException("Decorators currently do not work on Sequence & Selector node types.");
+			if (node.Children != null)
+				throw new ArgumentException("Decorators currently do not work on Composite node types.");
 
 			this.node = node;
 		}

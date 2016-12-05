@@ -25,7 +25,8 @@ namespace BehaviorTree
 			return new INode[]
 			{
 				whileIf.InitialIfTrue,
-				new ParallelSequence("Parallel", whileIf.ParallelIfTrue, trueAction)
+				new ParallelSequence("Parallel",
+					ChildRunPolicy.ParallelRevalidate, whileIf.ParallelIfTrue, trueAction)
 			};
 		}
 
@@ -44,10 +45,11 @@ namespace BehaviorTree
 			return new INode[]
 			{
 				new Sequence(whileIf.InitialIfTrue,
-					new ParallelSequence("Parallel", whileIf.ParallelIfTrue, trueAction)),
-				//new ParallelSequence("Parallel", new Invert(whileIf.ParallelIfFalse), falseAction)
+					new ParallelSequence("Parallel",
+						ChildRunPolicy.ParallelRevalidate, whileIf.ParallelIfTrue, trueAction)),
 				new Sequence(whileIf.InitialIfFalse,
-					new ParallelSequence("Parallel", new Invert(whileIf.ParallelIfFalse), falseAction))
+					new ParallelSequence("Parallel",
+						ChildRunPolicy.ParallelRevalidate, new Invert(whileIf.ParallelIfFalse), falseAction))
 			};
 		}
 

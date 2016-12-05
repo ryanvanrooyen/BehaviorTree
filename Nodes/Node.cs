@@ -16,10 +16,17 @@ namespace BehaviorTree
 		Result Run();
 		string Name { get; }
 		INode[] Children { get; }
-		bool RunChildrenInParallel { get; }
+		ChildRunPolicy ChildRunPolicy { get; }
 		void AddObserver(INodeObserver observer);
 		void RemoveObserver(INodeObserver observer);
 		void Reset();
+	}
+
+	public enum ChildRunPolicy
+	{
+		Sequential,
+		ParallelOnce,
+		ParallelRevalidate
 	}
 
 	public interface INodeObserver
@@ -39,8 +46,7 @@ namespace BehaviorTree
 		private readonly string name;
 		private bool hasStarted;
 		private IList<INodeObserver> observers;
-		protected bool runChildreninParallel = false;
-
+	
 		public Node(string name)
 		{
 			if (name == null)
@@ -51,7 +57,7 @@ namespace BehaviorTree
 
 		public virtual string Name { get { return this.name; } }
 		public virtual INode[] Children { get { return null; } }
-		public virtual bool RunChildrenInParallel { get { return false; } }
+		public virtual ChildRunPolicy ChildRunPolicy { get { return ChildRunPolicy.Sequential; } }
 
 		public virtual void Reset()
 		{

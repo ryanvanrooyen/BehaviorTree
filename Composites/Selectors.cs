@@ -25,6 +25,12 @@ namespace BehaviorTree
 			: this("ParallelSelector", children) { }
 
 		public ParallelSelector(string name, params INode[] children)
-			: base(name, Result.Failure, children) { }
+			: base(name, Result.Failure, ChildRunPolicy.ParallelOnce, children) { }
+
+		public ParallelSelector(ChildRunPolicy runPolicy, params INode[] children)
+			: base("ParallelSelector", Result.Failure, runPolicy, children) { }
+		
+		public ParallelSelector(string name, ChildRunPolicy runPolicy, params INode[] children)
+			: base(name, Result.Failure, runPolicy, children) { }
 	}
 }
